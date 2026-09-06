@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SIH26027 — Indian Railways AI Block Planning & Digital Twin</title>
   
-  <!-- Fonts: Inter & JetBrains Mono -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 
-  <!-- Three.js with local and CDN fallback -->
+  <!-- Three.js + OrbitControls -->
   <script src="js/three.min.js"></script>
   <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>')</script>
   <script src="js/OrbitControls.js"></script>
@@ -18,22 +18,20 @@
 
   <style>
     :root {
-      /* FI MONEY / NEO-BANKING DARK THEME */
-      --bg-base: #080a10;
-      --bg-surface: #0f131d;
-      --bg-surface-elevated: #161c2b;
-      --bg-card: #141824;
-      --bg-card-hover: #1c2233;
-      --bg-glass: rgba(18, 23, 36, 0.82);
+      --bg-base: #07090e;
+      --bg-surface: #0e121c;
+      --bg-surface-elevated: #151a28;
+      --bg-card: #131826;
+      --bg-card-hover: #1a2133;
+      --bg-glass: rgba(14, 18, 28, 0.86);
       
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-focus: rgba(255, 107, 24, 0.5);
       --border-glass: rgba(255, 255, 255, 0.12);
 
-      /* Fi Accents: Industrial Orange + Cyber Teal */
       --fi-orange: #ff6b18;
-      --fi-orange-glow: rgba(255, 107, 24, 0.4);
-      --fi-orange-light: #ff873d;
+      --fi-orange-glow: rgba(255, 107, 24, 0.45);
+      --fi-orange-light: #ff8533;
       --fi-teal: #00e5ff;
       --fi-teal-glow: rgba(0, 229, 255, 0.35);
       --fi-green: #00d09c;
@@ -43,12 +41,12 @@
 
       --text-primary: #ffffff;
       --text-secondary: #9aa2b4;
-      --text-tertiary: #60687c;
+      --text-tertiary: #5d667a;
 
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
-      --radius-xl: 28px;
+      --radius-xl: 26px;
       --radius-full: 9999px;
 
       --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -78,16 +76,16 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* TOP FI APP BAR */
+    /* TOP HEADER */
     .fi-app-bar {
-      height: 60px;
+      height: 54px;
       background: var(--bg-surface);
       border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      z-index: 40;
+      z-index: 50;
       flex-shrink: 0;
     }
 
@@ -98,17 +96,17 @@
     }
 
     .fi-logo-squircle {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       background: linear-gradient(135deg, var(--fi-orange), #d44a00);
-      border-radius: 10px;
+      border-radius: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 15px;
+      font-size: 13px;
       color: #000;
-      box-shadow: 0 0 16px var(--fi-orange-glow);
+      box-shadow: 0 0 14px var(--fi-orange-glow);
     }
 
     .fi-brand-info h1 {
@@ -117,7 +115,7 @@
       color: #fff;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .fi-brand-info h1 span.fi-accent {
@@ -137,10 +135,10 @@
       align-items: center;
       gap: 4px;
       font-weight: 700;
-      font-size: 9.5px;
+      font-size: 9px;
       padding: 2px 7px;
       border-radius: var(--radius-full);
-      background: rgba(0, 208, 156, 0.1);
+      background: rgba(0, 208, 156, 0.12);
       color: var(--fi-green);
       border: 1px solid rgba(0, 208, 156, 0.3);
     }
@@ -149,6 +147,25 @@
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .btn-fi-icon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .btn-fi-icon:hover {
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .btn-fi-pill {
@@ -164,14 +181,12 @@
       align-items: center;
       gap: 5px;
       box-shadow: 0 4px 14px var(--fi-orange-glow);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s;
     }
 
-    .btn-fi-pill:active {
-      transform: scale(0.94);
-    }
+    .btn-fi-pill:active { transform: scale(0.95); }
 
-    /* MAIN VIEW CONTAINER */
+    /* MAIN STACK CONTAINER */
     .fi-main-container {
       flex: 1;
       position: relative;
@@ -187,7 +202,7 @@
       bottom: 0;
       display: none;
       opacity: 0;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.2s ease;
       background: var(--bg-base);
     }
 
@@ -198,13 +213,23 @@
     }
 
     /* ==========================================================================
-       VIEW 1: 3D DIGITAL TWIN + FI BOTTOM SHEET
+       VIEW 1: CLEAN 3D DIGITAL TWIN + NON-BLOCKING CONTROLS
        ========================================================================== */
-    .twin-viewport-wrapper {
+    .twin-layout-container {
       width: 100%;
+      height: 100%;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 3D Canvas Column: 100% unobstructed stage */
+    .twin-canvas-column {
+      flex: 1;
       height: 100%;
       position: relative;
       overflow: hidden;
+      background: #07090e;
     }
 
     #canvas3DContainer {
@@ -213,23 +238,23 @@
       position: absolute;
       top: 0;
       left: 0;
+      display: block;
     }
 
-    /* Floating Camera & Action Bar at Top */
-    .fi-floating-cam-bar {
+    /* Sleek Floating Camera Controls Pill */
+    .fi-cam-floating-bar {
       position: absolute;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 12px;
+      left: 14px;
       display: flex;
       align-items: center;
-      gap: 5px;
-      background: var(--bg-glass);
+      gap: 4px;
+      background: rgba(14, 18, 28, 0.85);
       backdrop-filter: blur(16px);
       border: 1px solid var(--border-glass);
-      padding: 4px 6px;
+      padding: 4px;
       border-radius: var(--radius-full);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
       z-index: 20;
     }
 
@@ -237,12 +262,16 @@
       background: transparent;
       border: none;
       color: var(--text-secondary);
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 700;
       padding: 5px 11px;
       border-radius: var(--radius-full);
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
       transition: all 0.15s;
+      white-space: nowrap;
     }
 
     .fi-cam-chip:hover { color: #fff; }
@@ -250,19 +279,18 @@
       background: var(--fi-orange);
       color: #000;
       font-weight: 800;
-      box-shadow: 0 0 12px var(--fi-orange-glow);
+      box-shadow: 0 0 10px var(--fi-orange-glow);
     }
 
-    /* Floating HUD Toast Alert */
-    .fi-floating-hud-toast {
+    /* Sleek Floating Status Pill at Top Right of 3D Canvas */
+    .fi-status-floating-pill {
       position: absolute;
-      top: 56px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(18, 23, 36, 0.92);
-      backdrop-filter: blur(12px);
+      top: 12px;
+      right: 14px;
+      background: rgba(14, 18, 28, 0.85);
+      backdrop-filter: blur(16px);
       border: 1px solid var(--border-glass);
-      padding: 6px 16px;
+      padding: 5px 12px;
       border-radius: var(--radius-full);
       font-size: 10px;
       font-weight: 700;
@@ -270,19 +298,18 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      z-index: 20;
       pointer-events: none;
-      z-index: 15;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-      white-space: nowrap;
     }
 
-    .fi-dot-pulse {
+    .fi-dot-live {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: var(--fi-orange);
-      box-shadow: 0 0 8px var(--fi-orange);
-      animation: fiPulse 1.5s infinite;
+      background: var(--fi-green);
+      box-shadow: 0 0 8px var(--fi-green);
+      animation: fiPulse 1.6s infinite;
     }
 
     @keyframes fiPulse {
@@ -290,173 +317,219 @@
       50% { opacity: 1; transform: scale(1.3); }
     }
 
-    /* Quick Action Floating Pills */
-    .fi-quick-actions-bar {
+    /* Full-screen Clean Mode Toggle Button */
+    .fi-clean-mode-btn {
       position: absolute;
-      top: 96px;
-      right: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 20;
-    }
-
-    .fi-action-pill {
-      background: var(--bg-glass);
+      bottom: 20px;
+      left: 14px;
+      background: rgba(14, 18, 28, 0.85);
       backdrop-filter: blur(14px);
       border: 1px solid var(--border-glass);
-      color: #fff;
-      font-size: 10px;
+      color: var(--text-secondary);
+      font-size: 10.5px;
       font-weight: 700;
       padding: 6px 12px;
       border-radius: var(--radius-full);
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-      transition: all 0.15s;
+      gap: 5px;
+      z-index: 25;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+      transition: all 0.2s;
     }
 
-    .fi-action-pill:active { transform: scale(0.95); }
-    .fi-action-pill.warning { border-color: rgba(255, 165, 2, 0.4); color: var(--fi-amber); }
-    .fi-action-pill.danger { border-color: rgba(255, 71, 87, 0.4); color: var(--fi-red); }
+    .fi-clean-mode-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
 
-    /* FI BOTTOM SHEET (TACTILE PULL-UP DRAWER) */
-    .fi-bottom-sheet {
-      position: absolute;
-      bottom: 68px; /* Above Bottom Dock */
-      left: 14px;
-      right: 14px;
-      background: var(--bg-glass);
-      backdrop-filter: blur(24px);
-      border: 1px solid var(--border-glass);
-      border-radius: var(--radius-lg);
-      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.7);
-      z-index: 25;
+    /* ==========================================================================
+       SIDEBAR / DRAWER CONTROLS: NEVER OVERLAY THE TRAINS!
+       ========================================================================== */
+    
+    /* Desktop Sidebar (Laptop Version >= 900px) */
+    .twin-sidebar-column {
+      width: 380px;
+      min-width: 380px;
+      height: 100%;
+      overflow-y: auto;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
-      max-height: 480px;
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.35s;
-      overflow: hidden;
-    }
-
-    .fi-sheet-handle-bar {
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      gap: 14px;
+      padding: 16px;
+      padding-bottom: 90px;
+      z-index: 30;
       flex-shrink: 0;
     }
 
-    .fi-sheet-handle {
-      width: 36px;
+    /* Mobile Sheet State (Mobile Version < 900px) */
+    @media (max-width: 899px) {
+      .twin-layout-container {
+        flex-direction: column;
+      }
+
+      /* On mobile, sidebar turns into a sleek, non-intrusive bottom drawer */
+      .twin-sidebar-column {
+        position: absolute;
+        bottom: 64px; /* Sits cleanly right above bottom dock */
+        left: 12px;
+        right: 12px;
+        width: auto;
+        min-width: 0;
+        height: auto;
+        max-height: 52px; /* DEFAULT COLLAPSED: PEEK MODE ONLY (Leaves 88% screen for trains!) */
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-glass);
+        background: rgba(14, 18, 28, 0.92);
+        backdrop-filter: blur(24px);
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.7);
+        padding: 8px 14px 12px;
+        overflow: hidden;
+        transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s ease;
+      }
+
+      /* When expanded on mobile */
+      .twin-sidebar-column.expanded {
+        max-height: 72vh;
+        overflow-y: auto;
+      }
+
+      /* Hide floating camera bar labels on small screens for ultra-clean view */
+      .fi-cam-chip span.label { display: none; }
+      .fi-status-floating-pill span.sub { display: none; }
+    }
+
+    /* Mobile Drawer Handle Bar */
+    .fi-drawer-handle-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 4px;
+      flex-shrink: 0;
+    }
+
+    .fi-drawer-handle {
+      width: 38px;
       height: 4px;
       background: var(--text-tertiary);
       border-radius: var(--radius-full);
-      transition: background 0.15s;
+      margin-bottom: 6px;
     }
 
-    .fi-bottom-sheet:hover .fi-sheet-handle {
-      background: var(--text-secondary);
-    }
-
-    .fi-sheet-content {
-      padding: 0 16px 16px;
-      overflow-y: auto;
+    .fi-drawer-peek-summary {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
     }
 
-    /* Fi KPI Compact Grid */
-    .fi-kpi-row {
+    .fi-drawer-peek-summary .peek-btn {
+      color: var(--fi-orange);
+      font-size: 10.5px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    @media (min-width: 900px) {
+      .fi-drawer-handle-row { display: none; }
+    }
+
+    /* Mini KPI Grid */
+    .fi-kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
     }
 
-    .fi-kpi-card {
+    .fi-kpi-box {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 8px 6px;
+      padding: 8px 4px;
       text-align: center;
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
 
-    .fi-kpi-card .val {
-      font-size: 16px;
+    .fi-kpi-box .v {
+      font-size: 15px;
       font-weight: 800;
       color: #fff;
       font-family: var(--font-mono);
     }
 
-    .fi-kpi-card .val.orange { color: var(--fi-orange); }
-    .fi-kpi-card .val.green { color: var(--fi-green); }
-    .fi-kpi-card .val.teal { color: var(--fi-teal); }
-    .fi-kpi-card .lbl { font-size: 8px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
+    .fi-kpi-box .v.orange { color: var(--fi-orange); }
+    .fi-kpi-box .v.green { color: var(--fi-green); }
+    .fi-kpi-box .v.teal { color: var(--fi-teal); }
+    .fi-kpi-box .l { font-size: 8px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
 
-    /* Fi Recommendation Hero Card */
-    .fi-hero-insight-card {
-      background: linear-gradient(135deg, rgba(255, 107, 24, 0.1), rgba(0, 229, 255, 0.05));
+    /* Recommended Plan Hero Card */
+    .fi-plan-hero-card {
+      background: linear-gradient(135deg, rgba(255, 107, 24, 0.12), rgba(0, 229, 255, 0.05));
       border: 1px solid rgba(255, 107, 24, 0.35);
       border-radius: var(--radius-md);
       padding: 12px 14px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
     }
 
     .fi-score-circle {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       background: var(--fi-orange);
       color: #000;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 900;
       font-family: var(--font-mono);
-      box-shadow: 0 0 16px var(--fi-orange-glow);
+      box-shadow: 0 0 14px var(--fi-orange-glow);
       flex-shrink: 0;
     }
 
-    .fi-insight-text {
-      flex: 1;
-    }
-
-    .fi-insight-text h4 {
+    .fi-plan-details h4 {
       font-size: 12px;
       font-weight: 800;
       color: #fff;
     }
 
-    .fi-insight-text p {
-      font-size: 10px;
+    .fi-plan-details p {
+      font-size: 10.5px;
       color: var(--fi-orange);
       font-weight: 700;
       margin-top: 2px;
     }
 
-    .fi-insight-text small {
+    .fi-plan-details small {
       font-size: 9px;
       color: var(--text-secondary);
       display: block;
       margin-top: 2px;
     }
 
-    /* SLIDE TO AUTHORIZE COMPONENT (ICONIC FI MONEY GESTURE) */
-    .fi-slider-container {
+    /* THE ICONIC FI MONEY "SLIDE TO AUTHORIZE" SWIPE GESTURE */
+    .fi-slide-action-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .fi-slider-runway {
       position: relative;
-      height: 48px;
-      background: #0d111a;
+      height: 46px;
+      background: #090c13;
       border: 1px solid var(--border-glass);
       border-radius: var(--radius-full);
       overflow: hidden;
@@ -464,142 +537,157 @@
       align-items: center;
       justify-content: center;
       user-select: none;
-      margin-top: 4px;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
     }
 
-    .fi-slider-track-text {
+    .fi-slider-label {
       font-size: 11px;
       font-weight: 800;
       color: var(--text-secondary);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       pointer-events: none;
       z-index: 5;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: opacity 0.2s;
     }
 
-    .fi-slider-track-text span.shimmer {
+    .fi-slider-label span.pulse-arrow {
       color: var(--fi-orange);
-      animation: textShimmer 2s infinite;
+      animation: fiArrowShift 1.6s infinite;
     }
 
-    @keyframes textShimmer {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
+    @keyframes fiArrowShift {
+      0%, 100% { opacity: 0.4; transform: translateX(0); }
+      50% { opacity: 1; transform: translateX(4px); }
     }
 
-    .fi-slider-fill {
+    .fi-slider-fill-progress {
       position: absolute;
       top: 0;
       left: 0;
       height: 100%;
-      width: 48px;
+      width: 46px;
       background: linear-gradient(90deg, var(--fi-orange), var(--fi-orange-light));
       border-radius: var(--radius-full);
-      opacity: 0.25;
+      opacity: 0.28;
       pointer-events: none;
     }
 
-    .fi-slider-thumb {
+    .fi-slider-dragger {
       position: absolute;
       top: 3px;
       left: 3px;
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       background: var(--fi-orange);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #000;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 900;
       cursor: grab;
       z-index: 10;
       box-shadow: 0 0 14px var(--fi-orange-glow);
-      transition: background 0.2s;
     }
 
-    .fi-slider-thumb:active {
+    .fi-slider-dragger:active {
       cursor: grabbing;
-      transform: scale(0.96);
+      transform: scale(0.95);
     }
 
-    .fi-slider-container.authorized {
+    .fi-slider-runway.authorized {
       background: rgba(0, 208, 156, 0.15);
       border-color: var(--fi-green);
     }
 
-    .fi-slider-container.authorized .fi-slider-track-text {
+    .fi-slider-runway.authorized .fi-slider-label {
       color: var(--fi-green);
       font-weight: 900;
     }
 
-    .fi-slider-container.authorized .fi-slider-thumb {
+    .fi-slider-runway.authorized .fi-slider-dragger {
       background: var(--fi-green);
       box-shadow: 0 0 16px var(--fi-green-glow);
     }
 
-    /* 4D Timeline Scrubber */
-    .fi-timeline-row {
+    /* Quick Disruption Action Chips */
+    .fi-actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .fi-btn-action {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+
+    .fi-btn-action:active { transform: scale(0.96); }
+    .fi-btn-action.warning { border-color: rgba(255, 165, 2, 0.4); color: var(--fi-amber); }
+    .fi-btn-action.danger { border-color: rgba(255, 71, 87, 0.4); color: var(--fi-red); }
+
+    /* 4D Timeline Scrubber */
+    .fi-timeline-card {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border-subtle);
-      padding: 6px 12px;
       border-radius: var(--radius-md);
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    .fi-time-clock {
+    .fi-timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+
+    .fi-timeline-clock {
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--fi-orange);
-      min-width: 60px;
     }
 
-    .fi-slider-range {
-      flex: 1;
+    .fi-range-input {
+      width: 100%;
       accent-color: var(--fi-orange);
       cursor: pointer;
     }
 
     /* ==========================================================================
-       VIEW 2: MASTER TRAIN GRAPH
+       OTHER FULL VIEW DECKS (Graph, Solver, Bundles, Insights)
        ========================================================================== */
     .fi-deck-container {
       width: 100%;
       height: 100%;
       overflow-y: auto;
       padding: 16px;
-      padding-bottom: 90px; /* space for dock */
+      padding-bottom: 90px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
-    .fi-graph-wrapper {
-      height: 380px;
-      background: #0a0d14;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      position: relative;
-      overflow: hidden;
-    }
-
-    #timeDistanceCanvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    /* ==========================================================================
-       VIEW 3: CP-SAT OPTIMIZER & XAI
-       ========================================================================== */
     .fi-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
@@ -633,118 +721,28 @@
       font-family: var(--font-mono);
     }
 
-    .fi-pareto-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 12px;
-    }
-
-    .fi-plan-card {
-      background: var(--bg-card);
+    /* Master Graph Canvas */
+    .fi-graph-wrapper {
+      height: 380px;
+      background: #090c13;
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .fi-plan-card:hover { background: var(--bg-card-hover); }
-    .fi-plan-card.active {
-      border-color: var(--fi-orange);
-      background: rgba(255, 107, 24, 0.08);
-      box-shadow: 0 0 16px rgba(255, 107, 24, 0.15);
-    }
-
-    .fi-plan-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    /* ==========================================================================
-       VIEW 4: SHADOW BUNDLING
-       ========================================================================== */
-    .fi-savings-hero {
-      background: linear-gradient(135deg, rgba(0, 208, 156, 0.12), rgba(0, 229, 255, 0.05));
-      border: 1px solid var(--fi-green);
       border-radius: var(--radius-lg);
-      padding: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 0 20px rgba(0, 208, 156, 0.15);
-    }
-
-    .fi-savings-val {
-      font-size: 32px;
-      font-weight: 900;
-      color: var(--fi-green);
-      font-family: var(--font-mono);
-    }
-
-    /* ==========================================================================
-       VIEW 5: SIMPY BENCHMARKS
-       ========================================================================== */
-    .fi-bench-hero {
-      background: linear-gradient(135deg, rgba(255, 107, 24, 0.14), rgba(0, 229, 255, 0.06));
-      border: 1px solid var(--fi-orange);
-      border-radius: var(--radius-lg);
-      padding: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 0 20px var(--fi-orange-glow);
-    }
-
-    .fi-bench-val {
-      font-size: 36px;
-      font-weight: 900;
-      color: var(--fi-orange);
-      font-family: var(--font-mono);
-    }
-
-    .fi-bar-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-
-    .fi-bar-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .fi-bar-bg {
-      height: 22px;
-      background: #0d111a;
-      border-radius: var(--radius-full);
-      overflow: hidden;
       position: relative;
+      overflow: hidden;
     }
 
-    .fi-bar-inner {
+    #timeDistanceCanvas {
+      width: 100%;
       height: 100%;
-      border-radius: var(--radius-full);
-      display: flex;
-      align-items: center;
-      padding-left: 10px;
-      font-size: 10px;
-      font-weight: 800;
-      color: #fff;
-      font-family: var(--font-mono);
-      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      display: block;
     }
 
     /* ==========================================================================
-       BOTTOM FLOATING FI NAVIGATION DOCK
+       BOTTOM FLOATING FI DOCK (NAVIGATION BAR)
        ========================================================================== */
     .fi-bottom-dock-wrapper {
       position: fixed;
-      bottom: max(14px, var(--safe-bottom));
+      bottom: max(10px, var(--safe-bottom));
       left: 0;
       right: 0;
       display: flex;
@@ -755,30 +753,30 @@
 
     .fi-bottom-dock {
       pointer-events: auto;
-      background: rgba(15, 19, 29, 0.9);
+      background: rgba(14, 18, 28, 0.92);
       backdrop-filter: blur(24px);
       border: 1px solid var(--border-glass);
-      padding: 6px;
+      padding: 5px;
       border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       gap: 4px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     }
 
     .fi-dock-item {
       background: transparent;
       border: none;
       color: var(--text-secondary);
-      padding: 8px 14px;
+      padding: 7px 13px;
       border-radius: var(--radius-full);
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 5px;
+      transition: all 0.2s;
     }
 
     .fi-dock-item:hover { color: #fff; }
@@ -793,30 +791,11 @@
     .fi-dock-item .dock-icon {
       font-size: 13px;
     }
-
-    /* DESKTOP RESPONSIVE ADAPTATION */
-    @media (min-width: 900px) {
-      .twin-viewport-wrapper {
-        display: grid;
-        grid-template-columns: 1fr 380px;
-      }
-
-      .fi-bottom-sheet {
-        position: static;
-        margin: 16px;
-        max-height: none;
-        height: calc(100% - 32px);
-      }
-
-      .fi-sheet-handle-bar {
-        display: none;
-      }
-    }
   </style>
 </head>
 <body class="fi-body">
 
-  <!-- TOP FI APP BAR -->
+  <!-- TOP HEADER -->
   <header class="fi-app-bar">
     <div class="fi-brand">
       <div class="fi-logo-squircle">IR</div>
@@ -824,7 +803,7 @@
         <h1>RAIL <span class="fi-accent">BLOCK AI</span></h1>
         <div class="fi-brand-sub">
           <span>GZB-ALJN 120km</span>
-          <span id="fiStatusChip" class="fi-status-pill">● CONNECTED</span>
+          <span class="fi-status-pill">● CONNECTED</span>
         </div>
       </div>
     </div>
@@ -836,170 +815,185 @@
     </div>
   </header>
 
-  <!-- MAIN VIEW CONTAINERS -->
+  <!-- MAIN VIEW DECK -->
   <main class="fi-main-container">
 
-    <!-- VIEW 1: 3D DIGITAL TWIN + FI BOTTOM SHEET -->
+    <!-- VIEW 1: 3D DIGITAL TWIN + NON-BLOCKING CONTROLS -->
     <section class="fi-view-pane active" id="pane-twin3d">
-      <div class="twin-viewport-wrapper">
+      <div class="twin-layout-container">
         
-        <!-- 3D Canvas -->
-        <div id="canvas3DContainer"></div>
+        <!-- 3D Digital Twin Stage (100% CLEAN & UNOBSTRUCTED) -->
+        <div class="twin-canvas-column" id="twinCanvasColumn">
+          
+          <!-- WebGL Three.js Canvas -->
+          <div id="canvas3DContainer"></div>
 
-        <!-- Floating Camera Presets Pill Bar -->
-        <div class="fi-floating-cam-bar">
-          <button class="fi-cam-chip active" data-cam="overview">Overview</button>
-          <button class="fi-cam-chip" data-cam="station_focus">Khurja</button>
-          <button class="fi-cam-chip" data-cam="block_focus">Worksite</button>
-          <button class="fi-cam-chip" data-cam="isometric_high">Drone</button>
-        </div>
-
-        <!-- Floating Live Status Toast -->
-        <div class="fi-floating-hud-toast">
-          <span class="fi-dot-pulse"></span>
-          <span id="hudStatusMsg">LIVE 3D TWIN • KHURJA-DANWAR BLOCK PROTECTED</span>
-        </div>
-
-        <!-- Quick Action Floating Buttons -->
-        <div class="fi-quick-actions-bar">
-          <button class="fi-action-pill warning" id="btnQuickDelay">
-            <span>⚡</span> Delay +35m
-          </button>
-          <button class="fi-action-pill danger" id="btnQuickFracture">
-            <span>🚨</span> Rail Fracture
-          </button>
-        </div>
-
-        <!-- Fi Money Expandable Bottom Sheet -->
-        <div class="fi-bottom-sheet" id="fiBottomSheet">
-          <div class="fi-sheet-handle-bar" id="fiSheetHandle">
-            <div class="fi-sheet-handle"></div>
+          <!-- Sleek Floating Camera Controls Pill -->
+          <div class="fi-cam-floating-bar" id="fiCamBar">
+            <button class="fi-cam-chip active" data-cam="overview">
+              <span>🛰️</span><span class="label">Overview</span>
+            </button>
+            <button class="fi-cam-chip" data-cam="station_focus">
+              <span>🚉</span><span class="label">Khurja</span>
+            </button>
+            <button class="fi-cam-chip" data-cam="block_focus">
+              <span>🚧</span><span class="label">Worksite</span>
+            </button>
+            <button class="fi-cam-chip" data-cam="follow_train">
+              <span>🚄</span><span class="label">Follow Train</span>
+            </button>
+            <button class="fi-cam-chip" data-cam="isometric_high">
+              <span>🦅</span><span class="label">Drone</span>
+            </button>
           </div>
 
-          <div class="fi-sheet-content">
-            <!-- Mini KPIs -->
-            <div class="fi-kpi-row">
-              <div class="fi-kpi-card">
-                <span class="val orange">51</span>
-                <span class="lbl">Trains</span>
-              </div>
-              <div class="fi-kpi-card">
-                <span class="val green">99.4%</span>
-                <span class="lbl">Asset Health</span>
-              </div>
-              <div class="fi-kpi-card">
-                <span class="val teal">90m</span>
-                <span class="lbl">Time Saved</span>
-              </div>
-              <div class="fi-kpi-card">
-                <span class="val">0</span>
-                <span class="lbl">TSR Caution</span>
-              </div>
-            </div>
+          <!-- Sleek Floating Telemetry Status Pill -->
+          <div class="fi-status-floating-pill" id="fiStatusPill">
+            <span class="fi-dot-live"></span>
+            <span id="hudStatusMsg">LIVE TWIN • KHURJA-DANWAR BLOCK LOCKED</span>
+            <span class="sub" style="color: var(--text-secondary); font-family: var(--font-mono);">[120 KM]</span>
+          </div>
 
-            <!-- AI Recommendation Hero Card -->
-            <div class="fi-hero-insight-card">
-              <div class="fi-score-circle" id="heroScoreVal">92</div>
-              <div class="fi-insight-text">
-                <h4>Plan A • Recommended Slot</h4>
-                <p id="heroWindowLabel">02:10 – 03:40 HRS (90 MIN)</p>
-                <small>Night valley slot • Zero passenger train delay</small>
-              </div>
-            </div>
+          <!-- 1-Click Clean / Full Immersion Mode Toggle Button -->
+          <button class="fi-clean-mode-btn" id="btnToggleCleanView" title="Toggle Clean Cinema View">
+            <span id="cleanViewIcon">👁️</span>
+            <span id="cleanViewText">Clean View</span>
+          </button>
+        </div>
 
-            <!-- Slide to Authorize Block (Iconic Fi Money Swipe Gesture) -->
-            <div class="fi-slider-container" id="fiSwipeContainer">
-              <div class="fi-slider-fill" id="fiSwipeFill"></div>
-              <div class="fi-slider-track-text" id="fiSwipeTrackText">
+        <!-- Dedicated Operations Control Deck (SIDEBAR ON LAPTOP / PEEK DRAWER ON MOBILE) -->
+        <aside class="twin-sidebar-column" id="twinSidebar">
+          
+          <!-- Mobile Drawer Grab Handle & Peek Bar -->
+          <div class="fi-drawer-handle-row" id="drawerToggle">
+            <div class="fi-drawer-handle"></div>
+            <div class="fi-drawer-peek-summary">
+              <span>⚡ Plan A (90m Block)</span>
+              <span class="peek-btn" id="peekBtnLabel">▲ Controls & Authorize</span>
+            </div>
+          </div>
+
+          <!-- 4 KPI Metrics -->
+          <div class="fi-kpi-grid">
+            <div class="fi-kpi-box">
+              <span class="v orange">51</span>
+              <span class="l">Trains</span>
+            </div>
+            <div class="fi-kpi-box">
+              <span class="v green">99.4%</span>
+              <span class="l">Health</span>
+            </div>
+            <div class="fi-kpi-box">
+              <span class="v teal">90m</span>
+              <span class="l">Saved</span>
+            </div>
+            <div class="fi-kpi-box">
+              <span class="v">0</span>
+              <span class="l">TSR</span>
+            </div>
+          </div>
+
+          <!-- Plan A Hero Card -->
+          <div class="fi-plan-hero-card">
+            <div class="fi-score-circle" id="heroScoreVal">92</div>
+            <div class="fi-plan-details">
+              <h4>Plan A • Optimal Window</h4>
+              <p id="heroWindowLabel">02:10 – 03:40 HRS (90 MIN)</p>
+              <small>Zero passenger delay • Night shadow valley</small>
+            </div>
+          </div>
+
+          <!-- Iconic Fi Money "Slide to Authorize" Gesture -->
+          <div class="fi-slide-action-box">
+            <div class="fi-slider-runway" id="fiSwipeContainer">
+              <div class="fi-slider-fill-progress" id="fiSwipeFill"></div>
+              <div class="fi-slider-label" id="fiSwipeTrackText">
                 <span>Slide to Authorize Block</span>
-                <span class="shimmer">➔➔➔</span>
+                <span class="pulse-arrow">➔➔</span>
               </div>
-              <div class="fi-slider-thumb" id="fiSwipeThumb">➔</div>
-            </div>
-
-            <!-- 4D Scrubber Row -->
-            <div class="fi-timeline-row">
-              <span class="fi-time-clock" id="fiClock">02:25:00</span>
-              <input type="range" class="fi-slider-range" id="fiTimeSlider" min="0" max="1440" value="145">
-              <button class="fi-cam-chip active" id="fiPlayPauseBtn" style="padding: 4px 8px;">⏸</button>
+              <div class="fi-slider-dragger" id="fiSwipeThumb">➔</div>
             </div>
           </div>
-        </div>
+
+          <!-- Quick Disruption Simulation Buttons -->
+          <div class="fi-actions-row">
+            <button class="fi-btn-action warning" id="btnQuickDelay">
+              <span>⚡</span> Delay 12562 (+35m)
+            </button>
+            <button class="fi-btn-action danger" id="btnQuickFracture">
+              <span>🚨</span> Rail Fracture
+            </button>
+          </div>
+
+          <!-- 4D Interactive Timeline Scrubber -->
+          <div class="fi-timeline-card">
+            <div class="fi-timeline-header">
+              <span>4D REPLAY TIME</span>
+              <span class="fi-timeline-clock" id="clockDisplay">02:25:00 HRS</span>
+            </div>
+            <input type="range" class="fi-range-input" id="timeScrubber" min="0" max="1440" value="145">
+          </div>
+
+          <!-- Departmental Bundling Pill Card -->
+          <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 10px; font-size: 10.5px;">
+            <div style="font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; justify-content: space-between;">
+              <span>BUNDLED ASSETS</span>
+              <span style="color: var(--fi-green);">3 IN 1</span>
+            </div>
+            <div style="color: var(--text-secondary); line-height: 1.5;">
+              • 09-3X Tamper CSM-912 (Civil)<br>
+              • Tower Wagon TW-1104 (TRD OHE)<br>
+              • Point Machine Lubrication (S&T)
+            </div>
+          </div>
+
+        </aside>
+
       </div>
     </section>
 
-    <!-- VIEW 2: MASTER TRAIN STRING GRAPH -->
+    <!-- VIEW 2: MASTER TRAIN GRAPH -->
     <section class="fi-view-pane" id="pane-masterGraph">
       <div class="fi-deck-container">
         <div class="fi-card">
           <div class="fi-card-header">
-            <h3>24h Master String Chart</h3>
-            <span class="fi-pill-tag">120 KM CORRIDOR</span>
+            <h3>24-Hour Master Train Trajectory Graph</h3>
+            <span class="fi-pill-tag">SECTION CONTROLLER</span>
           </div>
-          <p style="font-size: 11px; color: var(--text-secondary);">
-            Section Controller trajectory graph showing scheduled vs actual train paths and the Khurja–Danwar shadow block window.
-          </p>
-          <div class="fi-graph-wrapper" id="canvasWrapper">
+          <p style="font-size: 11px; color: var(--text-secondary);">Distance (120 km) vs Time (24h) master chart showing all 51 trains and shadow block slot.</p>
+          <div class="fi-graph-wrapper">
             <canvas id="timeDistanceCanvas"></canvas>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 3: CP-SAT OPTIMIZER -->
+    <!-- VIEW 3: CP-SAT OPTIMIZER & XAI -->
     <section class="fi-view-pane" id="pane-optimizerDeck">
       <div class="fi-deck-container">
         <div class="fi-card">
           <div class="fi-card-header">
-            <h3>Pareto Candidate Tradeoffs</h3>
-            <span class="fi-pill-tag">OR-TOOLS CP-SAT</span>
+            <h3>Google OR-Tools CP-SAT Solver</h3>
+            <span class="fi-pill-tag">EXPLAINABLE AI</span>
           </div>
-          <div class="fi-pareto-grid">
-            <div class="fi-plan-card active">
-              <div class="fi-plan-card-header">
-                <strong>Plan A (Balanced AI)</strong>
-                <span style="color: var(--fi-orange); font-weight: 800;">Score 92</span>
+          <p style="font-size: 11px; color: var(--text-secondary);">Pareto-optimal candidate windows computed in 2.8s across 51 train paths.</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div style="background: rgba(255, 107, 24, 0.08); border: 1px solid var(--fi-orange); border-radius: var(--radius-md); padding: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #fff;">
+                <span>Plan A (Recommended)</span>
+                <span style="color: var(--fi-orange);">Score 92</span>
               </div>
-              <p style="font-size: 11px; color: var(--text-secondary);">02:10–03:40 • 0 min delay • High synergy</p>
+              <p style="font-size: 11px; color: var(--fi-orange); margin-top: 4px; font-weight: 700;">02:10 - 03:40 HRS (90m)</p>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">Pass Delay: 0m | Freight Delay: 12m</div>
             </div>
-            <div class="fi-plan-card">
-              <div class="fi-plan-card-header">
-                <strong>Plan B (Daytime Shift)</strong>
-                <span style="color: var(--fi-amber); font-weight: 800;">Score 68</span>
-              </div>
-              <p style="font-size: 11px; color: var(--text-secondary);">11:30–13:00 • +48 min delay • Medium risk</p>
-            </div>
-            <div class="fi-plan-card">
-              <div class="fi-plan-card-header">
-                <strong>Plan C (Extended Window)</strong>
-                <span style="color: var(--fi-red); font-weight: 800;">Score 54</span>
-              </div>
-              <p style="font-size: 11px; color: var(--text-secondary);">10:00–13:30 • +140 min delay • High impact</p>
-            </div>
-          </div>
-        </div>
 
-        <div class="fi-card">
-          <div class="fi-card-header">
-            <h3>RDSO Track Geometry Index</h3>
-            <span class="fi-pill-tag">URGENT TAMPING</span>
-          </div>
-          <div class="fi-bar-row">
-            <div class="fi-bar-label">
-              <span>UI (Unevenness Index): 63.4</span>
-              <span style="color: var(--fi-amber);">Threshold &lt;65</span>
-            </div>
-            <div class="fi-bar-bg">
-              <div class="fi-bar-inner" style="width: 63%; background: var(--fi-amber);">63.4 / 100</div>
-            </div>
-          </div>
-          <div class="fi-bar-row">
-            <div class="fi-bar-label">
-              <span>TI (Twist Index): 59.8</span>
-              <span style="color: var(--fi-red);">Critical</span>
-            </div>
-            <div class="fi-bar-bg">
-              <div class="fi-bar-inner" style="width: 59%; background: var(--fi-red);">59.8 / 100</div>
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #fff;">
+                <span>Plan B (Max Duration)</span>
+                <span style="color: var(--fi-teal);">Score 84</span>
+              </div>
+              <p style="font-size: 11px; color: var(--fi-teal); margin-top: 4px; font-weight: 700;">01:30 - 03:45 HRS (135m)</p>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">Pass Delay: 18m | Freight Delay: 45m</div>
             </div>
           </div>
         </div>
@@ -1009,29 +1003,13 @@
     <!-- VIEW 4: SHADOW BUNDLING -->
     <section class="fi-view-pane" id="pane-bundlingMatrix">
       <div class="fi-deck-container">
-        <div class="fi-savings-hero">
-          <div>
-            <h3 style="font-size: 15px; font-weight: 800; color: #fff;">180 Minutes Reclaimed</h3>
-            <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Track closure reduced from 270m to 90m via AI synchronization.</p>
-          </div>
-          <div class="fi-savings-val">90 MIN</div>
-        </div>
-
-        <div class="fi-card">
-          <div class="fi-card-header">
-            <h3>Bundled Departments</h3>
-            <span class="fi-pill-tag">SINGLE CORRIDOR</span>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
-            <div style="background: var(--bg-card); padding: 10px; border-radius: var(--radius-md); border-left: 3px solid var(--fi-orange);">
-              <strong>Civil Engineering (P-Way):</strong> 09-3X Tamper CSM-912 stabled at Khurja
+        <div class="fi-card" style="background: linear-gradient(135deg, rgba(0, 208, 156, 0.12), rgba(0, 229, 255, 0.05)); border-color: var(--fi-green);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3 style="font-size: 15px; font-weight: 800; color: #fff;">180 Minutes Reclaimed</h3>
+              <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Track closure reduced from 270m to 90m via AI synchronization.</p>
             </div>
-            <div style="background: var(--bg-card); padding: 10px; border-radius: var(--radius-md); border-left: 3px solid var(--fi-teal);">
-              <strong>Electrical TRD:</strong> 4W Tower Wagon TW-1104 concurrent OHE inspection
-            </div>
-            <div style="background: var(--bg-card); padding: 10px; border-radius: var(--radius-md); border-left: 3px solid var(--fi-green);">
-              <strong>Signal & Telecom:</strong> Danwar point machine lubrication
-            </div>
+            <div style="font-size: 28px; font-weight: 900; color: var(--fi-green); font-family: var(--font-mono);">90 MIN</div>
           </div>
         </div>
       </div>
@@ -1040,85 +1018,13 @@
     <!-- VIEW 5: SIMPY BENCHMARKS -->
     <section class="fi-view-pane" id="pane-simulationBenchmarks">
       <div class="fi-deck-container">
-        <div class="fi-bench-hero">
-          <div>
-            <h3 style="font-size: 15px; font-weight: 800; color: #fff;">Passenger Delay Eliminated</h3>
-            <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Evaluated on 51 trains over 120km section.</p>
-          </div>
-          <div class="fi-bench-val">96.5%</div>
-        </div>
-
-        <div class="fi-card">
-          <div class="fi-card-header">
-            <h3>Comparative Passenger Delay</h3>
-            <span class="fi-pill-tag">SIMPY DIGITAL TWIN</span>
-          </div>
-          <div class="fi-bar-row">
-            <div class="fi-bar-label">
-              <span>Manual Dispatching</span>
-              <span style="color: var(--fi-red);">384 Mins</span>
+        <div class="fi-card" style="background: linear-gradient(135deg, rgba(255, 107, 24, 0.14), rgba(0, 229, 255, 0.06)); border-color: var(--fi-orange);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3 style="font-size: 15px; font-weight: 800; color: #fff;">96.5% Delay Reduction</h3>
+              <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Tested over 51 trains in SimPy discrete-event simulation.</p>
             </div>
-            <div class="fi-bar-bg">
-              <div class="fi-bar-inner" style="width: 100%; background: var(--fi-red);">384 min</div>
-            </div>
-          </div>
-          <div class="fi-bar-row">
-            <div class="fi-bar-label">
-              <span>Fixed Night Slot</span>
-              <span style="color: var(--fi-amber);">192 Mins</span>
-            </div>
-            <div class="fi-bar-bg">
-              <div class="fi-bar-inner" style="width: 50%; background: var(--fi-amber);">192 min</div>
-            </div>
-          </div>
-          <div class="fi-bar-row">
-            <div class="fi-bar-label">
-              <span>SIH26027 AI Engine</span>
-              <span style="color: var(--fi-orange); font-weight: 800;">14 Mins (-96.5%)</span>
-            </div>
-            <div class="fi-bar-bg">
-              <div class="fi-bar-inner" style="width: 5%; background: var(--fi-orange); box-shadow: 0 0 10px var(--fi-orange-glow);">14m</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 6: REPLANNING LAB -->
-    <section class="fi-view-pane" id="pane-replanningLab">
-      <div class="fi-deck-container">
-        <div class="fi-card">
-          <div class="fi-card-header">
-            <h3>Dynamic Disruption Simulator</h3>
-            <span class="fi-pill-tag">SUB-15s ENGINE</span>
-          </div>
-          <label style="font-size: 11px; color: var(--text-secondary);">SELECT TRAIN TO DELAY:</label>
-          <select id="selTrainDisrupt" style="width: 100%; padding: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle); color: #fff; border-radius: var(--radius-md); font-size: 11px;">
-            <option value="12562">12562 Swatantrata Senani Exp</option>
-            <option value="12004">12004 Lucknow Shatabdi Exp</option>
-            <option value="22436">22436 Vande Bharat Express</option>
-            <option value="BOXN_7412">BOXN-7412 Coal Freight</option>
-          </select>
-
-          <div style="display: flex; justify-content: space-between; font-size: 11px; margin-top: 8px;">
-            <span>DELAY DURATION:</span>
-            <span id="lblDelayVal" style="color: var(--fi-orange); font-weight: 800;">+35 mins</span>
-          </div>
-          <input type="range" id="rngDelayMins" min="5" max="90" step="5" value="35" style="accent-color: var(--fi-orange);">
-
-          <button class="btn-fi-pill" id="btnTriggerDelayReplan" style="margin-top: 10px; justify-content: center;">
-            ⚡ Inject Delay & Replan
-          </button>
-        </div>
-
-        <div class="fi-card">
-          <div class="fi-card-header">
-            <h3>Audit Event Log</h3>
-            <span class="fi-pill-tag">LIVE</span>
-          </div>
-          <div id="replanningAuditLog" style="font-family: var(--font-mono); font-size: 10.5px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 5px;">
-            <div>[02:00:00] Initial block 02:10 - 03:40 active.</div>
-            <div style="color: var(--fi-orange);">[02:00:05] DSS listening to COA stream...</div>
+            <div style="font-size: 28px; font-weight: 900; color: var(--fi-orange); font-family: var(--font-mono);">-96.5%</div>
           </div>
         </div>
       </div>
@@ -1152,37 +1058,38 @@
     </nav>
   </div>
 
-  <!-- SCRIPT -->
+  <!-- SCRIPT ENGINE -->
   <script>
     /* ==========================================================================
-       THREE.JS ENGINE WITH MOBILE TOUCH ROTATION & ZOOM
+       THREE.JS DIGITAL TWIN ENGINE
        ========================================================================== */
-    class MobileThreeScene {
+    class DigitalTwinEngine {
       constructor(containerId) {
         this.container = document.getElementById(containerId);
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x080a10);
-        this.scene.fog = new THREE.FogExp2(0x080a10, 0.0018);
+        this.scene.background = new THREE.Color(0x07090e);
+        this.scene.fog = new THREE.FogExp2(0x07090e, 0.0016);
 
-        const width = this.container.clientWidth || window.innerWidth;
-        const height = this.container.clientHeight || window.innerHeight;
+        const w = this.container.clientWidth || window.innerWidth;
+        const h = this.container.clientHeight || window.innerHeight;
 
-        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 3000);
-        this.camera.position.set(-110, 140, 190);
+        this.camera = new THREE.PerspectiveCamera(45, w / h, 1, 3500);
+        this.camera.position.set(-120, 130, 200);
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-        this.renderer.setSize(width, height);
+        this.renderer.setSize(w, h);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.container.appendChild(this.renderer.domElement);
 
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.06;
-        this.controls.maxPolarAngle = Math.PI / 2 - 0.05;
-        this.controls.minDistance = 30;
-        this.controls.maxDistance = 750;
+        this.controls.maxPolarAngle = Math.PI / 2 - 0.04;
+        this.controls.minDistance = 25;
+        this.controls.maxDistance = 850;
         this.controls.target.set(0, 0, 0);
 
+        this.cameraMode = "free"; // "free" or "follow"
         this.animators = [];
         this.setupLighting();
         this.setupGround();
@@ -1192,53 +1099,60 @@
       }
 
       setupLighting() {
-        this.scene.add(new THREE.AmbientLight(0x252e42, 1.3));
-        const sun = new THREE.DirectionalLight(0xfff7ed, 1.4);
-        sun.position.set(-150, 220, 140);
+        this.scene.add(new THREE.AmbientLight(0x222a3a, 1.4));
+        const sun = new THREE.DirectionalLight(0xfff5e6, 1.4);
+        sun.position.set(-140, 240, 150);
         this.scene.add(sun);
 
-        const orangeRim = new THREE.DirectionalLight(0xff6b18, 0.8);
-        orangeRim.position.set(140, 90, -140);
-        this.scene.add(orangeRim);
+        const orangeFill = new THREE.DirectionalLight(0xff6b18, 0.75);
+        orangeFill.position.set(160, 80, -120);
+        this.scene.add(orangeFill);
       }
 
       setupGround() {
         const ground = new THREE.Mesh(
-          new THREE.PlaneGeometry(1200, 800),
-          new THREE.MeshStandardMaterial({ color: 0x07090f, roughness: 0.95 })
+          new THREE.PlaneGeometry(1400, 900),
+          new THREE.MeshStandardMaterial({ color: 0x06080d, roughness: 0.95 })
         );
         ground.rotation.x = -Math.PI / 2;
-        ground.position.y = -0.6;
+        ground.position.y = -0.5;
         this.scene.add(ground);
 
-        const grid = new THREE.GridHelper(1200, 60, 0xff6b18, 0x151b2a);
-        grid.position.y = -0.55;
+        const grid = new THREE.GridHelper(1400, 70, 0xff6b18, 0x121724);
+        grid.position.y = -0.45;
         grid.material.opacity = 0.22;
         grid.material.transparent = true;
         this.scene.add(grid);
       }
 
       onResize() {
-        const width = this.container.clientWidth || window.innerWidth;
-        const height = this.container.clientHeight || window.innerHeight;
-        this.camera.aspect = width / height;
+        const w = this.container.clientWidth || window.innerWidth;
+        const h = this.container.clientHeight || window.innerHeight;
+        this.camera.aspect = w / h;
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize(width, height);
+        this.renderer.setSize(w, h);
       }
 
-      setPreset(p) {
-        if (p === "overview") this.smoothCam(new THREE.Vector3(-110, 140, 190), new THREE.Vector3(0, 0, 0));
-        else if (p === "station_focus") this.smoothCam(new THREE.Vector3(-10, 40, 55), new THREE.Vector3(0, 5, 0));
-        else if (p === "block_focus") this.smoothCam(new THREE.Vector3(85, 35, 45), new THREE.Vector3(120, 0, 0));
-        else if (p === "isometric_high") this.smoothCam(new THREE.Vector3(-180, 230, 180), new THREE.Vector3(30, 0, 0));
+      setPreset(p, followTrain = null) {
+        if (p === "follow_train") {
+          this.cameraMode = "follow";
+          this.followTarget = followTrain;
+          return;
+        }
+
+        this.cameraMode = "free";
+        if (p === "overview") this.smoothCam(new THREE.Vector3(-120, 130, 200), new THREE.Vector3(0, 0, 0));
+        else if (p === "station_focus") this.smoothCam(new THREE.Vector3(-25, 38, 65), new THREE.Vector3(0, 4, 0));
+        else if (p === "block_focus") this.smoothCam(new THREE.Vector3(80, 40, 65), new THREE.Vector3(100, 2, 0));
+        else if (p === "isometric_high") this.smoothCam(new THREE.Vector3(-200, 240, 210), new THREE.Vector3(20, 0, 0));
       }
 
-      smoothCam(targetPos, targetLookAt, dur = 1000) {
+      smoothCam(targetPos, targetLookAt, dur = 900) {
         const startPos = this.camera.position.clone();
         const startLook = this.controls.target.clone();
-        const startT = performance.now();
+        const t0 = performance.now();
         const anim = (now) => {
-          const p = Math.min((now - startT) / dur, 1.0);
+          const p = Math.min((now - t0) / dur, 1.0);
           const ease = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
           this.camera.position.lerpVectors(startPos, targetPos, ease);
           this.controls.target.lerpVectors(startLook, targetLookAt, ease);
@@ -1252,6 +1166,14 @@
 
       render() {
         requestAnimationFrame(() => this.render());
+
+        if (this.cameraMode === "follow" && this.followTarget) {
+          const trainPos = this.followTarget.group.position;
+          const targetCam = new THREE.Vector3(trainPos.x - 70, trainPos.y + 24, trainPos.z + 45);
+          this.camera.position.lerp(targetCam, 0.08);
+          this.controls.target.lerp(new THREE.Vector3(trainPos.x + 20, trainPos.y + 4, trainPos.z), 0.08);
+        }
+
         this.controls.update();
         for (const fn of this.animators) fn(0.016);
         this.renderer.render(this.scene, this.camera);
@@ -1261,27 +1183,26 @@
     /* RAILWAY BUILDER */
     class MiniRailway {
       constructor(scene) {
-        this.scene = scene;
         this.group = new THREE.Group();
-        this.scene.add(this.group);
-        this.signals = [];
+        scene.add(this.group);
         this.build();
       }
 
       build() {
-        const len = 700;
+        const len = 750;
         const railMat = new THREE.MeshStandardMaterial({ color: 0x9da3b4, metalness: 0.8, roughness: 0.3 });
         const sleeperMat = new THREE.MeshStandardMaterial({ color: 0x3d4454 });
-        const ballastMat = new THREE.MeshStandardMaterial({ color: 0x141824 });
+        const ballastMat = new THREE.MeshStandardMaterial({ color: 0x131724 });
 
+        // Down Line & Up Line Tracks
         [-7, 7].forEach((z) => {
           const ballast = new THREE.Mesh(new THREE.BoxGeometry(len, 1.2, 10), ballastMat);
           ballast.position.set(0, 0, z);
           this.group.add(ballast);
 
-          for (let i = 0; i < 300; i++) {
-            const sl = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.7, 8.4), sleeperMat);
-            sl.position.set(-len/2 + i * (len/300), 0.7, z);
+          for (let i = 0; i < 320; i++) {
+            const sl = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.7, 8.4), sleeperMat);
+            sl.position.set(-len/2 + i * (len/320), 0.7, z);
             this.group.add(sl);
           }
 
@@ -1292,15 +1213,15 @@
           });
         });
 
-        // OHE Catenary Wire
+        // 25kV OHE Catenary Wire
         const wireMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
         [-7, 7].forEach(z => {
-          const wire = new THREE.Mesh(new THREE.BoxGeometry(len, 0.1, 0.1), wireMat);
-          wire.position.set(0, 18, z);
+          const wire = new THREE.Mesh(new THREE.BoxGeometry(len, 0.12, 0.12), wireMat);
+          wire.position.set(0, 17.5, z);
           this.group.add(wire);
         });
 
-        // Stations
+        // Station Platforms & Signs
         [
           { name: "GZB", x: -280 },
           { name: "DER", x: -140 },
@@ -1308,17 +1229,17 @@
           { name: "DAR", x: 140 },
           { name: "ALJN", x: 280 }
         ].forEach(st => {
-          const plat = new THREE.Mesh(new THREE.BoxGeometry(45, 2.5, 9), new THREE.MeshStandardMaterial({ color: 0x222736 }));
+          const plat = new THREE.Mesh(new THREE.BoxGeometry(48, 2.5, 9), new THREE.MeshStandardMaterial({ color: 0x202636 }));
           plat.position.set(st.x, 1.25, 17);
           this.group.add(plat);
 
-          const marker = new THREE.Mesh(new THREE.RingGeometry(2, 2.8, 6), new THREE.MeshBasicMaterial({ color: 0xff6b18, side: THREE.DoubleSide }));
-          marker.position.set(st.x, 14, 17);
-          marker.rotation.x = Math.PI / 2;
-          this.group.add(marker);
+          const ring = new THREE.Mesh(new THREE.RingGeometry(2, 2.8, 6), new THREE.MeshBasicMaterial({ color: 0xff6b18, side: THREE.DoubleSide }));
+          ring.position.set(st.x, 14, 17);
+          ring.rotation.x = Math.PI / 2;
+          this.group.add(ring);
         });
 
-        // Signal at Khurja Starter
+        // Signal Mast at Khurja Starter
         const sigGroup = new THREE.Group();
         sigGroup.position.set(-20, 0, -11);
         const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 14, 8), new THREE.MeshStandardMaterial({ color: 0x565e70 }));
@@ -1326,7 +1247,7 @@
         sigGroup.add(mast);
 
         this.sigLensMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
-        const lens = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 12), this.sigLensMat);
+        const lens = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 12), this.sigLensMat);
         lens.position.set(0, 13, 0.6);
         sigGroup.add(lens);
 
@@ -1340,17 +1261,16 @@
       }
     }
 
-    /* TRAIN SYSTEM */
+    /* TRAIN FLEET */
     class MiniTrains {
       constructor(scene) {
-        this.scene = scene;
         this.group = new THREE.Group();
-        this.scene.add(this.group);
+        scene.add(this.group);
 
         this.trains = [
           { id: "12562", name: "Swatantrata Senani", speed: 115, dir: 1, x: -260, z: -7, color: 0xff6b18, coaches: 4 },
-          { id: "22436", name: "Vande Bharat", speed: 130, dir: 1, x: -80, z: -7, color: 0xffffff, coaches: 5 },
-          { id: "BOXN", name: "Coal Freight", speed: 65, dir: -1, x: 180, z: 7, color: 0x00e5ff, coaches: 6 }
+          { id: "22436", name: "Vande Bharat", speed: 135, dir: 1, x: -70, z: -7, color: 0xffffff, coaches: 5 },
+          { id: "BOXN", name: "Coal Freight", speed: 65, dir: -1, x: 190, z: 7, color: 0x00e5ff, coaches: 6 }
         ];
 
         this.meshes = [];
@@ -1360,17 +1280,18 @@
       build() {
         this.trains.forEach(t => {
           const tg = new THREE.Group();
-          const loco = new THREE.Mesh(new THREE.BoxGeometry(15, 4.8, 3.8), new THREE.MeshStandardMaterial({ color: t.color }));
+          const loco = new THREE.Mesh(new THREE.BoxGeometry(16, 4.8, 3.8), new THREE.MeshStandardMaterial({ color: t.color, roughness: 0.4 }));
           loco.position.y = 3.8;
           tg.add(loco);
 
-          const light = new THREE.PointLight(0xfff7ed, 1.5, 40);
-          light.position.set(t.dir * 8, 3.5, 0);
+          // Headlight
+          const light = new THREE.PointLight(0xfff5e6, 1.8, 45);
+          light.position.set(t.dir * 8.5, 3.5, 0);
           tg.add(light);
 
           for (let c = 1; c <= t.coaches; c++) {
-            const coach = new THREE.Mesh(new THREE.BoxGeometry(13, 4.5, 3.8), new THREE.MeshStandardMaterial({ color: 0x1f2433 }));
-            coach.position.set(-t.dir * c * 14.5, 3.7, 0);
+            const coach = new THREE.Mesh(new THREE.BoxGeometry(13.5, 4.5, 3.8), new THREE.MeshStandardMaterial({ color: 0x1c212f, roughness: 0.5 }));
+            coach.position.set(-t.dir * c * 15, 3.7, 0);
             tg.add(coach);
           }
 
@@ -1380,54 +1301,67 @@
         });
       }
 
+      getVandeBharat() {
+        return this.meshes.find(m => m.t.id === "22436") || this.meshes[0];
+      }
+
       update(delta, isBlockActive) {
         this.meshes.forEach(m => {
-          let sp = m.t.speed * 0.08;
-          if (isBlockActive && m.t.dir === 1 && m.group.position.x >= -30 && m.group.position.x <= -10) {
-            sp = 0; // stop at signal
+          let sp = m.t.speed * 0.085;
+          // Hold at Khurja Red signal if block is active
+          if (isBlockActive && m.t.dir === 1 && m.group.position.x >= -35 && m.group.position.x <= -10) {
+            sp = 0;
           }
           m.group.position.x += m.t.dir * sp * delta * 50;
-          if (m.t.dir === 1 && m.group.position.x > 360) m.group.position.x = -360;
-          if (m.t.dir === -1 && m.group.position.x < -360) m.group.position.x = 360;
+          if (m.t.dir === 1 && m.group.position.x > 380) m.group.position.x = -380;
+          if (m.t.dir === -1 && m.group.position.x < -380) m.group.position.x = 380;
         });
       }
     }
 
-    /* BLOCK VISUALIZER */
+    /* BLOCK RESTRICTION ENVELOPE */
     class MiniBlock {
       constructor(scene) {
         this.group = new THREE.Group();
         scene.add(this.group);
 
         const geo = new THREE.BoxGeometry(140, 16, 11);
-        const mat = new THREE.MeshStandardMaterial({
+        this.mat = new THREE.MeshStandardMaterial({
           color: 0xff6b18,
           transparent: true,
           opacity: 0.35,
           side: THREE.DoubleSide
         });
-        this.mesh = new THREE.Mesh(geo, mat);
+        this.mesh = new THREE.Mesh(geo, this.mat);
         this.mesh.position.set(70, 8, -7);
         this.group.add(this.mesh);
 
         const edges = new THREE.EdgesGeometry(geo);
-        this.group.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xff8533 })));
+        this.lines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xff8533 }));
+        this.lines.position.set(70, 8, -7);
+        this.group.add(this.lines);
       }
 
       slide(dx) {
         const start = this.mesh.position.x;
-        const target = start + dx;
         const t0 = performance.now();
         const anim = (now) => {
           const p = Math.min((now - t0) / 1000, 1.0);
-          this.mesh.position.x = start + dx * p;
+          const curX = start + dx * p;
+          this.mesh.position.x = curX;
+          this.lines.position.x = curX;
           if (p < 1.0) requestAnimationFrame(anim);
         };
         requestAnimationFrame(anim);
       }
+
+      setAuthorized() {
+        this.mat.color.setHex(0x00d09c);
+        this.lines.material.color.setHex(0x00e5ff);
+      }
     }
 
-    /* TIME-DISTANCE GRAPH RENDERER */
+    /* 24H MASTER GRAPH */
     class MiniGraph {
       constructor(id) {
         this.canvas = document.getElementById(id);
@@ -1444,10 +1378,10 @@
         const ctx = this.ctx;
 
         ctx.clearRect(0, 0, W, H);
-        ctx.fillStyle = "#0a0d14";
+        ctx.fillStyle = "#090c13";
         ctx.fillRect(0, 0, W, H);
 
-        // Grid
+        // Time Grid
         ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
         ctx.lineWidth = 1;
         for (let x = 60; x < W - 20; x += 40) {
@@ -1455,17 +1389,17 @@
         }
 
         // Shaded Block
-        ctx.fillStyle = "rgba(255, 107, 24, 0.3)";
+        ctx.fillStyle = "rgba(255, 107, 24, 0.28)";
         ctx.fillRect(80, 140, 90, 70);
         ctx.strokeStyle = "#ff6b18";
         ctx.lineWidth = 2;
         ctx.strokeRect(80, 140, 90, 70);
 
         ctx.fillStyle = "#fff";
-        ctx.font = "bold 9px sans-serif";
+        ctx.font = "bold 9.5px sans-serif";
         ctx.fillText("BLOCK 02:10-03:40", 86, 175);
 
-        // Train Trajectories
+        // Train Lines
         ctx.lineWidth = 1.5;
         for (let i = 0; i < 24; i++) {
           const x1 = (i * 35) % (W - 80) + 60;
@@ -1479,32 +1413,33 @@
       }
     }
 
-    /* MASTER CONTROLLER */
-    let scene3D, railway, trains, blockViz, graph;
+    /* MASTER APPLICATION CONTROLLER */
+    let twin3D, railway, trains, blockViz, graph;
+    let isBlockActive = true;
 
     document.addEventListener("DOMContentLoaded", () => {
-      // 1. Init 3D
-      scene3D = new MobileThreeScene("canvas3DContainer");
-      railway = new MiniRailway(scene3D.scene);
-      trains = new MiniTrains(scene3D.scene);
-      blockViz = new MiniBlock(scene3D.scene);
+      // 1. Initialize 3D Twin
+      twin3D = new DigitalTwinEngine("canvas3DContainer");
+      railway = new MiniRailway(twin3D.scene);
+      trains = new MiniTrains(twin3D.scene);
+      blockViz = new MiniBlock(twin3D.scene);
       graph = new MiniGraph("timeDistanceCanvas");
 
-      let isBlockActive = true;
-      scene3D.addAnimator((delta) => {
+      twin3D.addAnimator((delta) => {
         trains.update(delta, isBlockActive);
       });
 
-      // 2. Camera Chips
+      // 2. Camera Preset Controls
       document.querySelectorAll(".fi-cam-chip").forEach(btn => {
         btn.addEventListener("click", () => {
           document.querySelectorAll(".fi-cam-chip").forEach(b => b.classList.remove("active"));
           btn.classList.add("active");
-          scene3D.setPreset(btn.dataset.cam);
+          const preset = btn.dataset.cam;
+          twin3D.setPreset(preset, trains.getVandeBharat());
         });
       });
 
-      // 3. Tab Switching (Bottom Dock)
+      // 3. Bottom Dock Tabs
       document.querySelectorAll(".fi-dock-item").forEach(item => {
         item.addEventListener("click", () => {
           document.querySelectorAll(".fi-dock-item").forEach(d => d.classList.remove("active"));
@@ -1514,63 +1449,103 @@
           const target = document.getElementById(`pane-${item.dataset.tab}`);
           if (target) target.classList.add("active");
 
-          if (item.dataset.tab === "twin3d" && scene3D) scene3D.onResize();
+          if (item.dataset.tab === "twin3d" && twin3D) twin3D.onResize();
           if (item.dataset.tab === "masterGraph" && graph) graph.draw();
         });
       });
 
-      // 4. Interactive "Slide to Authorize" (Fi Money Gesture)
+      // 4. Mobile Drawer Expand / Peek Toggle
+      const sidebar = document.getElementById("twinSidebar");
+      const drawerToggle = document.getElementById("drawerToggle");
+      const peekLabel = document.getElementById("peekBtnLabel");
+
+      if (drawerToggle && sidebar) {
+        drawerToggle.addEventListener("click", () => {
+          sidebar.classList.toggle("expanded");
+          const isExp = sidebar.classList.contains("expanded");
+          if (peekLabel) {
+            peekLabel.textContent = isExp ? "▼ Hide Drawer" : "▲ Controls & Authorize";
+          }
+        });
+      }
+
+      // 5. Clean View Mode (Immersion Mode)
+      const btnClean = document.getElementById("btnToggleCleanView");
+      let cleanModeActive = false;
+      if (btnClean) {
+        btnClean.addEventListener("click", () => {
+          cleanModeActive = !cleanModeActive;
+          const camBar = document.getElementById("fiCamBar");
+          const statusPill = document.getElementById("fiStatusPill");
+          const sidebar = document.getElementById("twinSidebar");
+
+          if (cleanModeActive) {
+            if (camBar) camBar.style.display = "none";
+            if (statusPill) statusPill.style.display = "none";
+            if (sidebar) sidebar.style.display = "none";
+            document.getElementById("cleanViewText").textContent = "Exit Clean";
+          } else {
+            if (camBar) camBar.style.display = "";
+            if (statusPill) statusPill.style.display = "";
+            if (sidebar) sidebar.style.display = "";
+            document.getElementById("cleanViewText").textContent = "Clean View";
+          }
+          if (twin3D) twin3D.onResize();
+        });
+      }
+
+      // 6. Interactive Fi Money "Slide to Authorize"
       initSlideToAuthorize();
 
-      // 5. Quick Actions
+      // 7. Quick Disruption Triggers
       document.getElementById("btnQuickDelay")?.addEventListener("click", () => {
         triggerDelayAnimation();
       });
 
-      document.getElementById("btnTriggerDelayReplan")?.addEventListener("click", () => {
-        triggerDelayAnimation();
-      });
-
       document.getElementById("btnQuickFracture")?.addEventListener("click", () => {
-        alert("🚨 Emergency Interlocking: Rail Fracture at Km 71.4. Section S04 locked at DANGER.");
+        const hud = document.getElementById("hudStatusMsg");
+        if (hud) hud.textContent = "🚨 CRITICAL: RAIL FRACTURE KM 71.4 • SECTION INTERLOCKED RED";
+        railway.setAspect("RED");
+        twin3D.setPreset("station_focus");
       });
 
-      // 6. Header Solve Button
+      // 8. Header Solve
       document.getElementById("btnHeaderSolve")?.addEventListener("click", () => {
-        scene3D.setPreset("block_focus");
-        alert("⚡ CP-SAT Solved: Plan A (Score 92) recommended for 02:10 - 03:40.");
+        twin3D.setPreset("block_focus");
+        const hud = document.getElementById("hudStatusMsg");
+        if (hud) hud.textContent = "⚡ CP-SAT SOLVED: PLAN A VERIFIED (SCORE 92)";
       });
     });
 
     function triggerDelayAnimation() {
       const hud = document.getElementById("hudStatusMsg");
-      if (hud) hud.textContent = "CRITICAL: TRAIN 12562 DELAYED +35M UPSTREAM!";
-      scene3D.setPreset("block_focus");
+      if (hud) hud.textContent = "TRAIN 12562 DELAYED +35M • ROLLING REPLANNING ACTIVE...";
+      twin3D.setPreset("block_focus");
 
       setTimeout(() => {
-        if (hud) hud.textContent = "AI REPLAN: SLID BLOCK TO 02:45–04:15 HRS • DELAY PREVENTED!";
+        if (hud) hud.textContent = "REPLANNED: BLOCK SLID TO 02:45–04:15 HRS • DELAY AVERTED";
         blockViz.slide(80);
         document.getElementById("heroWindowLabel").textContent = "02:45 – 04:15 HRS (REPLANNED)";
       }, 1200);
     }
 
-    // Touch & Mouse Drag for "Slide to Authorize"
+    // Touch and Mouse Swipe Handler
     function initSlideToAuthorize() {
-      const container = document.getElementById("fiSwipeContainer");
+      const runway = document.getElementById("fiSwipeContainer");
       const thumb = document.getElementById("fiSwipeThumb");
       const fill = document.getElementById("fiSwipeFill");
       const text = document.getElementById("fiSwipeTrackText");
-      if (!container || !thumb) return;
+      if (!runway || !thumb) return;
 
       let isDragging = false;
       let startX = 0;
       let maxSlide = 0;
 
       const onStart = (clientX) => {
-        if (container.classList.contains("authorized")) return;
+        if (runway.classList.contains("authorized")) return;
         isDragging = true;
         startX = clientX;
-        maxSlide = container.clientWidth - thumb.clientWidth - 6;
+        maxSlide = runway.clientWidth - thumb.clientWidth - 6;
       };
 
       const onMove = (clientX) => {
@@ -1580,28 +1555,35 @@
         if (delta > maxSlide) delta = maxSlide;
 
         thumb.style.left = `${3 + delta}px`;
-        fill.style.width = `${48 + delta}px`;
+        fill.style.width = `${46 + delta}px`;
 
-        if (delta >= maxSlide * 0.92) {
-          // Success Unlock!
+        if (delta >= maxSlide * 0.90) {
+          // Success Authorize!
           isDragging = false;
-          container.classList.add("authorized");
+          runway.classList.add("authorized");
           thumb.style.left = `${maxSlide + 3}px`;
           thumb.innerHTML = "✓";
           const pn = "PN-" + Math.floor(1000 + Math.random() * 9000);
           text.innerHTML = `<span>✓ AUTHORIZED: <strong>${pn}</strong></span>`;
+
+          // Release signal & highlight block
+          isBlockActive = false;
+          railway.setAspect("GREEN");
+          blockViz.setAuthorized();
+
+          const hud = document.getElementById("hudStatusMsg");
+          if (hud) hud.textContent = `BLOCK AUTHORIZED • PRIVATE NUMBER ${pn} ISSUED`;
         }
       };
 
       const onEnd = () => {
         if (!isDragging) return;
         isDragging = false;
-        if (!container.classList.contains("authorized")) {
-          // Snap back
+        if (!runway.classList.contains("authorized")) {
           thumb.style.transition = "left 0.25s ease";
           fill.style.transition = "width 0.25s ease";
           thumb.style.left = "3px";
-          fill.style.width = "48px";
+          fill.style.width = "46px";
           setTimeout(() => {
             thumb.style.transition = "";
             fill.style.transition = "";
@@ -1609,12 +1591,10 @@
         }
       };
 
-      // Mouse events
       thumb.addEventListener("mousedown", (e) => onStart(e.clientX));
       window.addEventListener("mousemove", (e) => onMove(e.clientX));
       window.addEventListener("mouseup", onEnd);
 
-      // Touch events (Mobile)
       thumb.addEventListener("touchstart", (e) => onStart(e.touches[0].clientX), { passive: true });
       window.addEventListener("touchmove", (e) => onMove(e.touches[0].clientX), { passive: true });
       window.addEventListener("touchend", onEnd);
