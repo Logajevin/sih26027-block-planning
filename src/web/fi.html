@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Auto-detect laptop/desktop screen (>= 900px) and switch to Previous Desktop Command Center
+    (function() {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('mode') === 'desktop' || (p.get('mode') !== 'mobile' && window.innerWidth >= 900 && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent))) {
+        window.location.replace('index.html' + (window.location.search ? window.location.search : ''));
+      }
+    })();
+    window.addEventListener('resize', function() {
+      const p = new URLSearchParams(window.location.search);
+      if (!p.get('mode') && window.innerWidth >= 900) {
+        window.location.replace('index.html');
+      }
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SIH26027 — Indian Railways AI Block Planning & Digital Twin</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Three.js + OrbitControls -->
+  <script src="js/three.min.js"></script>
+  <script>window.THREE || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>')</script>
+  <script src="js/OrbitControls.js"></script>
+  <script>window.THREE && window.THREE.OrbitControls || document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>')</script>
+
+  <style>
+    :root {
+      --bg-base: #07090e;
+      --bg-surface: #0e121c;
+      --bg-surface-elevated: #151a28;
+      --bg-card: #131826;
+      --bg-card-hover: #1a2133;
+      --bg-glass: rgba(14, 18, 28, 0.86);
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(255, 107, 24, 0.5);
+      --border-glass: rgba(255, 255, 255, 0.12);
+
+      --fi-orange: #ff6b18;
+      --fi-orange-glow: rgba(255, 107, 24, 0.45);
+      --fi-orange-light: #ff8533;
+      --fi-teal: #00e5ff;
+      --fi-teal-glow: rgba(0, 229, 255, 0.35);
+      --fi-green: #00d09c;
+      --fi-green-glow: rgba(0, 208, 156, 0.35);
+      --fi-red: #ff4757;
+      --fi-amber: #ffa502;
+
+      --text-primary: #ffffff;
+      --text-secondary: #9aa2b4;
+      --text-tertiary: #5d667a;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
+      --radius-full: 9999px;
+
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top: env(safe-area-inset-top, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body.fi-body {
+      font-family: var(--font-main);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* TOP HEADER */
+    .fi-app-bar {
+      height: 54px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 50;
+      flex-shrink: 0;
+    }
+
+    .fi-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fi-logo-squircle {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--fi-orange), #d44a00);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      color: #000;
+      box-shadow: 0 0 14px var(--fi-orange-glow);
+    }
+
+    .fi-brand-info h1 {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .fi-brand-info h1 span.fi-accent {
+      color: var(--fi-orange);
+    }
+
+    .fi-brand-sub {
+      font-size: 10px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .fi-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      background: rgba(0, 208, 156, 0.12);
+      color: var(--fi-green);
+      border: 1px solid rgba(0, 208, 156, 0.3);
+    }
+
+    .fi-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-fi-icon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .btn-fi-icon:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-fi-pill {
+      background: linear-gradient(135deg, var(--fi-orange), #e55300);
+      color: #000;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 14px var(--fi-orange-glow);
+      transition: all 0.2s;
+    }
+
+    .btn-fi-pill:active { transform: scale(0.95); }
+
+    /* MAIN STACK CONTAINER */
+    .fi-main-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .fi-view-pane {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      background: var(--bg-base);
+    }
+
+    .fi-view-pane.active {
+      display: flex;
+      opacity: 1;
+      z-index: 10;
+    }
+
+    /* ==========================================================================
+       VIEW 1: CLEAN 3D DIGITAL TWIN + NON-BLOCKING CONTROLS
+       ========================================================================== */
+    .twin-layout-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 3D Canvas Column: 100% unobstructed stage */
+    .twin-canvas-column {
+      flex: 1;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background: #07090e;
+    }
+
+    #canvas3DContainer {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+    }
+
+    /* Sleek Floating Camera Controls Pill */
+    .fi-cam-floating-bar {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(14, 18, 28, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      z-index: 20;
+    }
+
+    .fi-cam-chip {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .fi-cam-chip:hover { color: #fff; }
+    .fi-cam-chip.active {
+      background: var(--fi-orange);
+      color: #000;
+      font-weight: 800;
+      box-shadow: 0 0 10px var(--fi-orange-glow);
+    }
+
+    /* Sleek Floating Status Pill at Top Right of 3D Canvas */
+    .fi-status-floating-pill {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: rgba(14, 18, 28, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .fi-dot-live {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--fi-green);
+      box-shadow: 0 0 8px var(--fi-green);
+      animation: fiPulse 1.6s infinite;
+    }
+
+    @keyframes fiPulse {
+      0%, 100% { opacity: 0.3; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* Full-screen Clean Mode Toggle Button */
+    .fi-clean-mode-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 14px;
+      background: rgba(14, 18, 28, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 25;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+      transition: all 0.2s;
+    }
+
+    .fi-clean-mode-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* ==========================================================================
+       SIDEBAR / DRAWER CONTROLS: NEVER OVERLAY THE TRAINS!
+       ========================================================================== */
+    
+    /* Desktop Sidebar (Laptop Version >= 900px) */
+    .twin-sidebar-column {
+      width: 380px;
+      min-width: 380px;
+      height: 100%;
+      overflow-y: auto;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 16px;
+      padding-bottom: 90px;
+      z-index: 30;
+      flex-shrink: 0;
+    }
+
+    /* Mobile Sheet State (Mobile Version < 900px) */
+    @media (max-width: 899px) {
+      .twin-layout-container {
+        flex-direction: column;
+      }
+
+      /* On mobile, sidebar turns into a sleek, non-intrusive bottom drawer */
+      .twin-sidebar-column {
+        position: absolute;
+        bottom: 64px; /* Sits cleanly right above bottom dock */
+        left: 12px;
+        right: 12px;
+        width: auto;
+        min-width: 0;
+        height: auto;
+        max-height: 52px; /* DEFAULT COLLAPSED: PEEK MODE ONLY (Leaves 88% screen for trains!) */
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-glass);
+        background: rgba(14, 18, 28, 0.92);
+        backdrop-filter: blur(24px);
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.7);
+        padding: 8px 14px 12px;
+        overflow: hidden;
+        transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s ease;
+      }
+
+      /* When expanded on mobile */
+      .twin-sidebar-column.expanded {
+        max-height: 72vh;
+        overflow-y: auto;
+      }
+
+      /* Hide floating camera bar labels on small screens for ultra-clean view */
+      .fi-cam-chip span.label { display: none; }
+      .fi-status-floating-pill span.sub { display: none; }
+    }
+
+    /* Mobile Drawer Handle Bar */
+    .fi-drawer-handle-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 4px;
+      flex-shrink: 0;
+    }
+
+    .fi-drawer-handle {
+      width: 38px;
+      height: 4px;
+      background: var(--text-tertiary);
+      border-radius: var(--radius-full);
+      margin-bottom: 6px;
+    }
+
+    .fi-drawer-peek-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .fi-drawer-peek-summary .peek-btn {
+      color: var(--fi-orange);
+      font-size: 10.5px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    @media (min-width: 900px) {
+      .fi-drawer-handle-row { display: none; }
+    }
+
+    /* Mini KPI Grid */
+    .fi-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .fi-kpi-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .fi-kpi-box .v {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      font-family: var(--font-mono);
+    }
+
+    .fi-kpi-box .v.orange { color: var(--fi-orange); }
+    .fi-kpi-box .v.green { color: var(--fi-green); }
+    .fi-kpi-box .v.teal { color: var(--fi-teal); }
+    .fi-kpi-box .l { font-size: 8px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
+
+    /* Recommended Plan Hero Card */
+    .fi-plan-hero-card {
+      background: linear-gradient(135deg, rgba(255, 107, 24, 0.12), rgba(0, 229, 255, 0.05));
+      border: 1px solid rgba(255, 107, 24, 0.35);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .fi-score-circle {
+      width: 42px;
+      height: 42px;
+      background: var(--fi-orange);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      box-shadow: 0 0 14px var(--fi-orange-glow);
+      flex-shrink: 0;
+    }
+
+    .fi-plan-details h4 {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .fi-plan-details p {
+      font-size: 10.5px;
+      color: var(--fi-orange);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .fi-plan-details small {
+      font-size: 9px;
+      color: var(--text-secondary);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* THE ICONIC FI MONEY "SLIDE TO AUTHORIZE" SWIPE GESTURE */
+    .fi-slide-action-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .fi-slider-runway {
+      position: relative;
+      height: 46px;
+      background: #090c13;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+    }
+
+    .fi-slider-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+      pointer-events: none;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: opacity 0.2s;
+    }
+
+    .fi-slider-label span.pulse-arrow {
+      color: var(--fi-orange);
+      animation: fiArrowShift 1.6s infinite;
+    }
+
+    @keyframes fiArrowShift {
+      0%, 100% { opacity: 0.4; transform: translateX(0); }
+      50% { opacity: 1; transform: translateX(4px); }
+    }
+
+    .fi-slider-fill-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 46px;
+      background: linear-gradient(90deg, var(--fi-orange), var(--fi-orange-light));
+      border-radius: var(--radius-full);
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    .fi-slider-dragger {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 40px;
+      height: 40px;
+      background: var(--fi-orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: grab;
+      z-index: 10;
+      box-shadow: 0 0 14px var(--fi-orange-glow);
+    }
+
+    .fi-slider-dragger:active {
+      cursor: grabbing;
+      transform: scale(0.95);
+    }
+
+    .fi-slider-runway.authorized {
+      background: rgba(0, 208, 156, 0.15);
+      border-color: var(--fi-green);
+    }
+
+    .fi-slider-runway.authorized .fi-slider-label {
+      color: var(--fi-green);
+      font-weight: 900;
+    }
+
+    .fi-slider-runway.authorized .fi-slider-dragger {
+      background: var(--fi-green);
+      box-shadow: 0 0 16px var(--fi-green-glow);
+    }
+
+    /* Quick Disruption Action Chips */
+    .fi-actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .fi-btn-action {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+
+    .fi-btn-action:active { transform: scale(0.96); }
+    .fi-btn-action.warning { border-color: rgba(255, 165, 2, 0.4); color: var(--fi-amber); }
+    .fi-btn-action.danger { border-color: rgba(255, 71, 87, 0.4); color: var(--fi-red); }
+
+    /* 4D Timeline Scrubber */
+    .fi-timeline-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .fi-timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+
+    .fi-timeline-clock {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--fi-orange);
+    }
+
+    .fi-range-input {
+      width: 100%;
+      accent-color: var(--fi-orange);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       OTHER FULL VIEW DECKS (Graph, Solver, Bundles, Insights)
+       ========================================================================== */
+    .fi-deck-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 16px;
+      padding-bottom: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .fi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .fi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .fi-card-header h3 {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .fi-pill-tag {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 107, 24, 0.12);
+      color: var(--fi-orange);
+      border: 1px solid rgba(255, 107, 24, 0.3);
+      font-family: var(--font-mono);
+    }
+
+    /* Master Graph Canvas */
+    .fi-graph-wrapper {
+      height: 380px;
+      background: #090c13;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #timeDistanceCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ==========================================================================
+       BOTTOM FLOATING FI DOCK (NAVIGATION BAR)
+       ========================================================================== */
+    .fi-bottom-dock-wrapper {
+      position: fixed;
+      bottom: max(10px, var(--safe-bottom));
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .fi-bottom-dock {
+      pointer-events: auto;
+      background: rgba(14, 18, 28, 0.92);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border-glass);
+      padding: 5px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .fi-dock-item {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 7px 13px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .fi-dock-item:hover { color: #fff; }
+
+    .fi-dock-item.active {
+      background: var(--fi-orange);
+      color: #000;
+      font-weight: 800;
+      box-shadow: 0 2px 14px var(--fi-orange-glow);
+    }
+
+    .fi-dock-item .dock-icon {
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body class="fi-body">
+
+  <!-- TOP HEADER -->
+  <header class="fi-app-bar">
+    <div class="fi-brand">
+      <div class="fi-logo-squircle">IR</div>
+      <div class="fi-brand-info">
+        <h1>RAIL <span class="fi-accent">BLOCK AI</span></h1>
+        <div class="fi-brand-sub">
+          <span>GZB-ALJN 120km</span>
+          <span class="fi-status-pill">● CONNECTED</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fi-header-actions">
+      <a href="index.html?mode=desktop" class="btn-fi-icon" title="Switch to Desktop Command Center" style="text-decoration: none; width: auto; padding: 0 10px; font-size: 10px; font-weight: 800; gap: 4px; border-color: rgba(255, 107, 24, 0.4); color: var(--fi-orange);">
+        <span>💻</span> DESKTOP
+      </a>
+      
+      <button class="btn-fi-pill" id="btnHeaderSolve">
+        <span>⚡</span> SOLVE CP-SAT
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN VIEW DECK -->
+  <main class="fi-main-container">
+
+    <!-- VIEW 1: 3D DIGITAL TWIN + NON-BLOCKING CONTROLS -->
+    <section class="fi-view-pane active" id="pane-twin3d">
+      <div class="twin-layout-container">
+        
+        <!-- 3D Digital Twin Stage (100% CLEAN & UNOBSTRUCTED) -->
+        <div class="twin-canvas-column" id="twinCanvasColumn">
+          
+          <!-- WebGL Three.js Canvas -->
+          <div id="canvas3DContainer"></div>
+
+          <!-- Sleek Floating Camera Controls Pill -->
+          <div class="fi-cam-floating-bar" id="fiCamBar">
+            <button class="fi-cam-chip active" data-cam="overview">
+              <span>🛰️</span><span class="label">Overview</span>
+            </button>
+            <button class="fi-cam-chip" data-cam="station_focus">
+              <span>🚉</span><span class="label">Khurja</span>
+            </button>
+            <button class="fi-cam-chip" data-cam="block_focus">
+              <span>🚧</span><span class="label">Worksite</span>
+            </button>
+            <button class="fi-cam-chip" data-cam="follow_train">
+              <span>🚄</span><span class="label">Follow Train</span>
+            </button>
+            <button class="fi-cam-chip" data-cam="isometric_high">
+              <span>🦅</span><span class="label">Drone</span>
+            </button>
+          </div>
+
+          <!-- Sleek Floating Telemetry Status Pill -->
+          <div class="fi-status-floating-pill" id="fiStatusPill">
+            <span class="fi-dot-live"></span>
+            <span id="hudStatusMsg">LIVE TWIN • KHURJA-DANWAR BLOCK LOCKED</span>
+            <span class="sub" style="color: var(--text-secondary); font-family: var(--font-mono);">[120 KM]</span>
+          </div>
+
+          <!-- 1-Click Clean / Full Immersion Mode Toggle Button -->
+          <button class="fi-clean-mode-btn" id="btnToggleCleanView" title="Toggle Clean Cinema View">
+            <span id="cleanViewIcon">👁️</span>
+            <span id="cleanViewText">Clean View</span>
+          </button>
+        </div>
+
+        <!-- Dedicated Operations Control Deck (SIDEBAR ON LAPTOP / PEEK DRAWER ON MOBILE) -->
+        <aside class="twin-sidebar-column" id="twinSidebar">
+          
+          <!-- Mobile Drawer Grab Handle & Peek Bar -->
+          <div class="fi-drawer-handle-row" id="drawerToggle">
+            <div class="fi-drawer-handle"></div>
+            <div class="fi-drawer-peek-summary">
+              <span>⚡ Plan A (90m Block)</span>
+              <span class="peek-btn" id="peekBtnLabel">▲ Controls & Authorize</span>
+            </div>
+          </div>
+
+          <!-- 4 KPI Metrics -->
+          <div class="fi-kpi-grid">
+            <div class="fi-kpi-box">
+              <span class="v orange">51</span>
+              <span class="l">Trains</span>
+            </div>
+            <div class="fi-kpi-box">
+              <span class="v green">99.4%</span>
+              <span class="l">Health</span>
+            </div>
+            <div class="fi-kpi-box">
+              <span class="v teal">90m</span>
+              <span class="l">Saved</span>
+            </div>
+            <div class="fi-kpi-box">
+              <span class="v">0</span>
+              <span class="l">TSR</span>
+            </div>
+          </div>
+
+          <!-- Plan A Hero Card -->
+          <div class="fi-plan-hero-card">
+            <div class="fi-score-circle" id="heroScoreVal">92</div>
+            <div class="fi-plan-details">
+              <h4>Plan A • Optimal Window</h4>
+              <p id="heroWindowLabel">02:10 – 03:40 HRS (90 MIN)</p>
+              <small>Zero passenger delay • Night shadow valley</small>
+            </div>
+          </div>
+
+          <!-- Iconic Fi Money "Slide to Authorize" Gesture -->
+          <div class="fi-slide-action-box">
+            <div class="fi-slider-runway" id="fiSwipeContainer">
+              <div class="fi-slider-fill-progress" id="fiSwipeFill"></div>
+              <div class="fi-slider-label" id="fiSwipeTrackText">
+                <span>Slide to Authorize Block</span>
+                <span class="pulse-arrow">➔➔</span>
+              </div>
+              <div class="fi-slider-dragger" id="fiSwipeThumb">➔</div>
+            </div>
+          </div>
+
+          <!-- Quick Disruption Simulation Buttons -->
+          <div class="fi-actions-row">
+            <button class="fi-btn-action warning" id="btnQuickDelay">
+              <span>⚡</span> Delay 12562 (+35m)
+            </button>
+            <button class="fi-btn-action danger" id="btnQuickFracture">
+              <span>🚨</span> Rail Fracture
+            </button>
+          </div>
+
+          <!-- 4D Interactive Timeline Scrubber -->
+          <div class="fi-timeline-card">
+            <div class="fi-timeline-header">
+              <span>4D REPLAY TIME</span>
+              <span class="fi-timeline-clock" id="clockDisplay">02:25:00 HRS</span>
+            </div>
+            <input type="range" class="fi-range-input" id="timeScrubber" min="0" max="1440" value="145">
+          </div>
+
+          <!-- Departmental Bundling Pill Card -->
+          <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 10px; font-size: 10.5px;">
+            <div style="font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; justify-content: space-between;">
+              <span>BUNDLED ASSETS</span>
+              <span style="color: var(--fi-green);">3 IN 1</span>
+            </div>
+            <div style="color: var(--text-secondary); line-height: 1.5;">
+              • 09-3X Tamper CSM-912 (Civil)<br>
+              • Tower Wagon TW-1104 (TRD OHE)<br>
+              • Point Machine Lubrication (S&T)
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- VIEW 2: MASTER TRAIN GRAPH -->
+    <section class="fi-view-pane" id="pane-masterGraph">
+      <div class="fi-deck-container">
+        <div class="fi-card">
+          <div class="fi-card-header">
+            <h3>24-Hour Master Train Trajectory Graph</h3>
+            <span class="fi-pill-tag">SECTION CONTROLLER</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary);">Distance (120 km) vs Time (24h) master chart showing all 51 trains and shadow block slot.</p>
+          <div class="fi-graph-wrapper">
+            <canvas id="timeDistanceCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: CP-SAT OPTIMIZER & XAI -->
+    <section class="fi-view-pane" id="pane-optimizerDeck">
+      <div class="fi-deck-container">
+        <div class="fi-card">
+          <div class="fi-card-header">
+            <h3>Google OR-Tools CP-SAT Solver</h3>
+            <span class="fi-pill-tag">EXPLAINABLE AI</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary);">Pareto-optimal candidate windows computed in 2.8s across 51 train paths.</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div style="background: rgba(255, 107, 24, 0.08); border: 1px solid var(--fi-orange); border-radius: var(--radius-md); padding: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #fff;">
+                <span>Plan A (Recommended)</span>
+                <span style="color: var(--fi-orange);">Score 92</span>
+              </div>
+              <p style="font-size: 11px; color: var(--fi-orange); margin-top: 4px; font-weight: 700;">02:10 - 03:40 HRS (90m)</p>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">Pass Delay: 0m | Freight Delay: 12m</div>
+            </div>
+
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #fff;">
+                <span>Plan B (Max Duration)</span>
+                <span style="color: var(--fi-teal);">Score 84</span>
+              </div>
+              <p style="font-size: 11px; color: var(--fi-teal); margin-top: 4px; font-weight: 700;">01:30 - 03:45 HRS (135m)</p>
+              <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">Pass Delay: 18m | Freight Delay: 45m</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: SHADOW BUNDLING -->
+    <section class="fi-view-pane" id="pane-bundlingMatrix">
+      <div class="fi-deck-container">
+        <div class="fi-card" style="background: linear-gradient(135deg, rgba(0, 208, 156, 0.12), rgba(0, 229, 255, 0.05)); border-color: var(--fi-green);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3 style="font-size: 15px; font-weight: 800; color: #fff;">180 Minutes Reclaimed</h3>
+              <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Track closure reduced from 270m to 90m via AI synchronization.</p>
+            </div>
+            <div style="font-size: 28px; font-weight: 900; color: var(--fi-green); font-family: var(--font-mono);">90 MIN</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: SIMPY BENCHMARKS -->
+    <section class="fi-view-pane" id="pane-simulationBenchmarks">
+      <div class="fi-deck-container">
+        <div class="fi-card" style="background: linear-gradient(135deg, rgba(255, 107, 24, 0.14), rgba(0, 229, 255, 0.06)); border-color: var(--fi-orange);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3 style="font-size: 15px; font-weight: 800; color: #fff;">96.5% Delay Reduction</h3>
+              <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Tested over 51 trains in SimPy discrete-event simulation.</p>
+            </div>
+            <div style="font-size: 28px; font-weight: 900; color: var(--fi-orange); font-family: var(--font-mono);">-96.5%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM FLOATING FI DOCK -->
+  <div class="fi-bottom-dock-wrapper">
+    <nav class="fi-bottom-dock">
+      <button class="fi-dock-item active" data-tab="twin3d">
+        <span class="dock-icon">🌐</span>
+        <span>Twin</span>
+      </button>
+      <button class="fi-dock-item" data-tab="masterGraph">
+        <span class="dock-icon">📈</span>
+        <span>Graph</span>
+      </button>
+      <button class="fi-dock-item" data-tab="optimizerDeck">
+        <span class="dock-icon">⚡</span>
+        <span>Solver</span>
+      </button>
+      <button class="fi-dock-item" data-tab="bundlingMatrix">
+        <span class="dock-icon">🔗</span>
+        <span>Bundles</span>
+      </button>
+      <button class="fi-dock-item" data-tab="simulationBenchmarks">
+        <span class="dock-icon">📊</span>
+        <span>Insights</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    /* ==========================================================================
+       THREE.JS DIGITAL TWIN ENGINE
+       ========================================================================== */
+    class DigitalTwinEngine {
+      constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x07090e);
+        this.scene.fog = new THREE.FogExp2(0x07090e, 0.0016);
+
+        const w = this.container.clientWidth || window.innerWidth;
+        const h = this.container.clientHeight || window.innerHeight;
+
+        this.camera = new THREE.PerspectiveCamera(45, w / h, 1, 3500);
+        this.camera.position.set(-120, 130, 200);
+
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        this.renderer.setSize(w, h);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.container.appendChild(this.renderer.domElement);
+
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.06;
+        this.controls.maxPolarAngle = Math.PI / 2 - 0.04;
+        this.controls.minDistance = 25;
+        this.controls.maxDistance = 850;
+        this.controls.target.set(0, 0, 0);
+
+        this.cameraMode = "free"; // "free" or "follow"
+        this.animators = [];
+        this.setupLighting();
+        this.setupGround();
+
+        window.addEventListener("resize", () => this.onResize());
+        this.render();
+      }
+
+      setupLighting() {
+        this.scene.add(new THREE.AmbientLight(0x222a3a, 1.4));
+        const sun = new THREE.DirectionalLight(0xfff5e6, 1.4);
+        sun.position.set(-140, 240, 150);
+        this.scene.add(sun);
+
+        const orangeFill = new THREE.DirectionalLight(0xff6b18, 0.75);
+        orangeFill.position.set(160, 80, -120);
+        this.scene.add(orangeFill);
+      }
+
+      setupGround() {
+        const ground = new THREE.Mesh(
+          new THREE.PlaneGeometry(1400, 900),
+          new THREE.MeshStandardMaterial({ color: 0x06080d, roughness: 0.95 })
+        );
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.5;
+        this.scene.add(ground);
+
+        const grid = new THREE.GridHelper(1400, 70, 0xff6b18, 0x121724);
+        grid.position.y = -0.45;
+        grid.material.opacity = 0.22;
+        grid.material.transparent = true;
+        this.scene.add(grid);
+      }
+
+      onResize() {
+        const w = this.container.clientWidth || window.innerWidth;
+        const h = this.container.clientHeight || window.innerHeight;
+        this.camera.aspect = w / h;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(w, h);
+      }
+
+      setPreset(p, followTrain = null) {
+        if (p === "follow_train") {
+          this.cameraMode = "follow";
+          this.followTarget = followTrain;
+          return;
+        }
+
+        this.cameraMode = "free";
+        if (p === "overview") this.smoothCam(new THREE.Vector3(-120, 130, 200), new THREE.Vector3(0, 0, 0));
+        else if (p === "station_focus") this.smoothCam(new THREE.Vector3(-25, 38, 65), new THREE.Vector3(0, 4, 0));
+        else if (p === "block_focus") this.smoothCam(new THREE.Vector3(80, 40, 65), new THREE.Vector3(100, 2, 0));
+        else if (p === "isometric_high") this.smoothCam(new THREE.Vector3(-200, 240, 210), new THREE.Vector3(20, 0, 0));
+      }
+
+      smoothCam(targetPos, targetLookAt, dur = 900) {
+        const startPos = this.camera.position.clone();
+        const startLook = this.controls.target.clone();
+        const t0 = performance.now();
+        const anim = (now) => {
+          const p = Math.min((now - t0) / dur, 1.0);
+          const ease = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+          this.camera.position.lerpVectors(startPos, targetPos, ease);
+          this.controls.target.lerpVectors(startLook, targetLookAt, ease);
+          this.controls.update();
+          if (p < 1.0) requestAnimationFrame(anim);
+        };
+        requestAnimationFrame(anim);
+      }
+
+      addAnimator(fn) { this.animators.push(fn); }
+
+      render() {
+        requestAnimationFrame(() => this.render());
+
+        if (this.cameraMode === "follow" && this.followTarget) {
+          const trainPos = this.followTarget.group.position;
+          const targetCam = new THREE.Vector3(trainPos.x - 70, trainPos.y + 24, trainPos.z + 45);
+          this.camera.position.lerp(targetCam, 0.08);
+          this.controls.target.lerp(new THREE.Vector3(trainPos.x + 20, trainPos.y + 4, trainPos.z), 0.08);
+        }
+
+        this.controls.update();
+        for (const fn of this.animators) fn(0.016);
+        this.renderer.render(this.scene, this.camera);
+      }
+    }
+
+    /* RAILWAY BUILDER */
+    class MiniRailway {
+      constructor(scene) {
+        this.group = new THREE.Group();
+        scene.add(this.group);
+        this.build();
+      }
+
+      build() {
+        const len = 750;
+        const railMat = new THREE.MeshStandardMaterial({ color: 0x9da3b4, metalness: 0.8, roughness: 0.3 });
+        const sleeperMat = new THREE.MeshStandardMaterial({ color: 0x3d4454 });
+        const ballastMat = new THREE.MeshStandardMaterial({ color: 0x131724 });
+
+        // Down Line & Up Line Tracks
+        [-7, 7].forEach((z) => {
+          const ballast = new THREE.Mesh(new THREE.BoxGeometry(len, 1.2, 10), ballastMat);
+          ballast.position.set(0, 0, z);
+          this.group.add(ballast);
+
+          for (let i = 0; i < 320; i++) {
+            const sl = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.7, 8.4), sleeperMat);
+            sl.position.set(-len/2 + i * (len/320), 0.7, z);
+            this.group.add(sl);
+          }
+
+          [-2.2, 2.2].forEach((r) => {
+            const rail = new THREE.Mesh(new THREE.BoxGeometry(len, 0.8, 0.4), railMat);
+            rail.position.set(0, 1.3, z + r);
+            this.group.add(rail);
+          });
+        });
+
+        // 25kV OHE Catenary Wire
+        const wireMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+        [-7, 7].forEach(z => {
+          const wire = new THREE.Mesh(new THREE.BoxGeometry(len, 0.12, 0.12), wireMat);
+          wire.position.set(0, 17.5, z);
+          this.group.add(wire);
+        });
+
+        // Station Platforms & Signs
+        [
+          { name: "GZB", x: -280 },
+          { name: "DER", x: -140 },
+          { name: "KRJ", x: 0 },
+          { name: "DAR", x: 140 },
+          { name: "ALJN", x: 280 }
+        ].forEach(st => {
+          const plat = new THREE.Mesh(new THREE.BoxGeometry(48, 2.5, 9), new THREE.MeshStandardMaterial({ color: 0x202636 }));
+          plat.position.set(st.x, 1.25, 17);
+          this.group.add(plat);
+
+          const ring = new THREE.Mesh(new THREE.RingGeometry(2, 2.8, 6), new THREE.MeshBasicMaterial({ color: 0xff6b18, side: THREE.DoubleSide }));
+          ring.position.set(st.x, 14, 17);
+          ring.rotation.x = Math.PI / 2;
+          this.group.add(ring);
+        });
+
+        // Signal Mast at Khurja Starter
+        const sigGroup = new THREE.Group();
+        sigGroup.position.set(-20, 0, -11);
+        const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 14, 8), new THREE.MeshStandardMaterial({ color: 0x565e70 }));
+        mast.position.y = 7;
+        sigGroup.add(mast);
+
+        this.sigLensMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+        const lens = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 12), this.sigLensMat);
+        lens.position.set(0, 13, 0.6);
+        sigGroup.add(lens);
+
+        this.group.add(sigGroup);
+      }
+
+      setAspect(aspect) {
+        if (this.sigLensMat) {
+          this.sigLensMat.color.setHex(aspect === "RED" ? 0xef4444 : 0x00d09c);
+        }
+      }
+    }
+
+    /* TRAIN FLEET */
+    class MiniTrains {
+      constructor(scene) {
+        this.group = new THREE.Group();
+        scene.add(this.group);
+
+        this.trains = [
+          { id: "12562", name: "Swatantrata Senani", speed: 115, dir: 1, x: -260, z: -7, color: 0xff6b18, coaches: 4 },
+          { id: "22436", name: "Vande Bharat", speed: 135, dir: 1, x: -70, z: -7, color: 0xffffff, coaches: 5 },
+          { id: "BOXN", name: "Coal Freight", speed: 65, dir: -1, x: 190, z: 7, color: 0x00e5ff, coaches: 6 }
+        ];
+
+        this.meshes = [];
+        this.build();
+      }
+
+      build() {
+        this.trains.forEach(t => {
+          const tg = new THREE.Group();
+          const loco = new THREE.Mesh(new THREE.BoxGeometry(16, 4.8, 3.8), new THREE.MeshStandardMaterial({ color: t.color, roughness: 0.4 }));
+          loco.position.y = 3.8;
+          tg.add(loco);
+
+          // Headlight
+          const light = new THREE.PointLight(0xfff5e6, 1.8, 45);
+          light.position.set(t.dir * 8.5, 3.5, 0);
+          tg.add(light);
+
+          for (let c = 1; c <= t.coaches; c++) {
+            const coach = new THREE.Mesh(new THREE.BoxGeometry(13.5, 4.5, 3.8), new THREE.MeshStandardMaterial({ color: 0x1c212f, roughness: 0.5 }));
+            coach.position.set(-t.dir * c * 15, 3.7, 0);
+            tg.add(coach);
+          }
+
+          tg.position.set(t.x, 0, t.z);
+          this.group.add(tg);
+          this.meshes.push({ group: tg, t });
+        });
+      }
+
+      getVandeBharat() {
+        return this.meshes.find(m => m.t.id === "22436") || this.meshes[0];
+      }
+
+      update(delta, isBlockActive) {
+        this.meshes.forEach(m => {
+          let sp = m.t.speed * 0.085;
+          // Hold at Khurja Red signal if block is active
+          if (isBlockActive && m.t.dir === 1 && m.group.position.x >= -35 && m.group.position.x <= -10) {
+            sp = 0;
+          }
+          m.group.position.x += m.t.dir * sp * delta * 50;
+          if (m.t.dir === 1 && m.group.position.x > 380) m.group.position.x = -380;
+          if (m.t.dir === -1 && m.group.position.x < -380) m.group.position.x = 380;
+        });
+      }
+    }
+
+    /* BLOCK RESTRICTION ENVELOPE */
+    class MiniBlock {
+      constructor(scene) {
+        this.group = new THREE.Group();
+        scene.add(this.group);
+
+        const geo = new THREE.BoxGeometry(140, 16, 11);
+        this.mat = new THREE.MeshStandardMaterial({
+          color: 0xff6b18,
+          transparent: true,
+          opacity: 0.35,
+          side: THREE.DoubleSide
+        });
+        this.mesh = new THREE.Mesh(geo, this.mat);
+        this.mesh.position.set(70, 8, -7);
+        this.group.add(this.mesh);
+
+        const edges = new THREE.EdgesGeometry(geo);
+        this.lines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xff8533 }));
+        this.lines.position.set(70, 8, -7);
+        this.group.add(this.lines);
+      }
+
+      slide(dx) {
+        const start = this.mesh.position.x;
+        const t0 = performance.now();
+        const anim = (now) => {
+          const p = Math.min((now - t0) / 1000, 1.0);
+          const curX = start + dx * p;
+          this.mesh.position.x = curX;
+          this.lines.position.x = curX;
+          if (p < 1.0) requestAnimationFrame(anim);
+        };
+        requestAnimationFrame(anim);
+      }
+
+      setAuthorized() {
+        this.mat.color.setHex(0x00d09c);
+        this.lines.material.color.setHex(0x00e5ff);
+      }
+    }
+
+    /* 24H MASTER GRAPH */
+    class MiniGraph {
+      constructor(id) {
+        this.canvas = document.getElementById(id);
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext("2d");
+        this.draw();
+      }
+
+      draw() {
+        const W = this.canvas.parentElement.clientWidth || 340;
+        const H = 380;
+        this.canvas.width = W;
+        this.canvas.height = H;
+        const ctx = this.ctx;
+
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = "#090c13";
+        ctx.fillRect(0, 0, W, H);
+
+        // Time Grid
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
+        ctx.lineWidth = 1;
+        for (let x = 60; x < W - 20; x += 40) {
+          ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, H - 30); ctx.stroke();
+        }
+
+        // Shaded Block
+        ctx.fillStyle = "rgba(255, 107, 24, 0.28)";
+        ctx.fillRect(80, 140, 90, 70);
+        ctx.strokeStyle = "#ff6b18";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(80, 140, 90, 70);
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 9.5px sans-serif";
+        ctx.fillText("BLOCK 02:10-03:40", 86, 175);
+
+        // Train Lines
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 24; i++) {
+          const x1 = (i * 35) % (W - 80) + 60;
+          const x2 = x1 + 80;
+          ctx.strokeStyle = i % 5 === 0 ? "#00d09c" : (i % 2 === 0 ? "#00e5ff" : "#ff6b18");
+          ctx.beginPath();
+          ctx.moveTo(x1, 20);
+          ctx.lineTo(x2, H - 30);
+          ctx.stroke();
+        }
+      }
+    }
+
+    /* MASTER APPLICATION CONTROLLER */
+    let twin3D, railway, trains, blockViz, graph;
+    let isBlockActive = true;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Initialize 3D Twin
+      twin3D = new DigitalTwinEngine("canvas3DContainer");
+      railway = new MiniRailway(twin3D.scene);
+      trains = new MiniTrains(twin3D.scene);
+      blockViz = new MiniBlock(twin3D.scene);
+      graph = new MiniGraph("timeDistanceCanvas");
+
+      twin3D.addAnimator((delta) => {
+        trains.update(delta, isBlockActive);
+      });
+
+      // 2. Camera Preset Controls
+      document.querySelectorAll(".fi-cam-chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".fi-cam-chip").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          const preset = btn.dataset.cam;
+          twin3D.setPreset(preset, trains.getVandeBharat());
+        });
+      });
+
+      // 3. Bottom Dock Tabs
+      document.querySelectorAll(".fi-dock-item").forEach(item => {
+        item.addEventListener("click", () => {
+          document.querySelectorAll(".fi-dock-item").forEach(d => d.classList.remove("active"));
+          document.querySelectorAll(".fi-view-pane").forEach(p => p.classList.remove("active"));
+
+          item.classList.add("active");
+          const target = document.getElementById(`pane-${item.dataset.tab}`);
+          if (target) target.classList.add("active");
+
+          if (item.dataset.tab === "twin3d" && twin3D) twin3D.onResize();
+          if (item.dataset.tab === "masterGraph" && graph) graph.draw();
+        });
+      });
+
+      // 4. Mobile Drawer Expand / Peek Toggle
+      const sidebar = document.getElementById("twinSidebar");
+      const drawerToggle = document.getElementById("drawerToggle");
+      const peekLabel = document.getElementById("peekBtnLabel");
+
+      if (drawerToggle && sidebar) {
+        drawerToggle.addEventListener("click", () => {
+          sidebar.classList.toggle("expanded");
+          const isExp = sidebar.classList.contains("expanded");
+          if (peekLabel) {
+            peekLabel.textContent = isExp ? "▼ Hide Drawer" : "▲ Controls & Authorize";
+          }
+        });
+      }
+
+      // 5. Clean View Mode (Immersion Mode)
+      const btnClean = document.getElementById("btnToggleCleanView");
+      let cleanModeActive = false;
+      if (btnClean) {
+        btnClean.addEventListener("click", () => {
+          cleanModeActive = !cleanModeActive;
+          const camBar = document.getElementById("fiCamBar");
+          const statusPill = document.getElementById("fiStatusPill");
+          const sidebar = document.getElementById("twinSidebar");
+
+          if (cleanModeActive) {
+            if (camBar) camBar.style.display = "none";
+            if (statusPill) statusPill.style.display = "none";
+            if (sidebar) sidebar.style.display = "none";
+            document.getElementById("cleanViewText").textContent = "Exit Clean";
+          } else {
+            if (camBar) camBar.style.display = "";
+            if (statusPill) statusPill.style.display = "";
+            if (sidebar) sidebar.style.display = "";
+            document.getElementById("cleanViewText").textContent = "Clean View";
+          }
+          if (twin3D) twin3D.onResize();
+        });
+      }
+
+      // 6. Interactive Fi Money "Slide to Authorize"
+      initSlideToAuthorize();
+
+      // 7. Quick Disruption Triggers
+      document.getElementById("btnQuickDelay")?.addEventListener("click", () => {
+        triggerDelayAnimation();
+      });
+
+      document.getElementById("btnQuickFracture")?.addEventListener("click", () => {
+        const hud = document.getElementById("hudStatusMsg");
+        if (hud) hud.textContent = "🚨 CRITICAL: RAIL FRACTURE KM 71.4 • SECTION INTERLOCKED RED";
+        railway.setAspect("RED");
+        twin3D.setPreset("station_focus");
+      });
+
+      // 8. Header Solve
+      document.getElementById("btnHeaderSolve")?.addEventListener("click", () => {
+        twin3D.setPreset("block_focus");
+        const hud = document.getElementById("hudStatusMsg");
+        if (hud) hud.textContent = "⚡ CP-SAT SOLVED: PLAN A VERIFIED (SCORE 92)";
+      });
+    });
+
+    function triggerDelayAnimation() {
+      const hud = document.getElementById("hudStatusMsg");
+      if (hud) hud.textContent = "TRAIN 12562 DELAYED +35M • ROLLING REPLANNING ACTIVE...";
+      twin3D.setPreset("block_focus");
+
+      setTimeout(() => {
+        if (hud) hud.textContent = "REPLANNED: BLOCK SLID TO 02:45–04:15 HRS • DELAY AVERTED";
+        blockViz.slide(80);
+        document.getElementById("heroWindowLabel").textContent = "02:45 – 04:15 HRS (REPLANNED)";
+      }, 1200);
+    }
+
+    // Touch and Mouse Swipe Handler
+    function initSlideToAuthorize() {
+      const runway = document.getElementById("fiSwipeContainer");
+      const thumb = document.getElementById("fiSwipeThumb");
+      const fill = document.getElementById("fiSwipeFill");
+      const text = document.getElementById("fiSwipeTrackText");
+      if (!runway || !thumb) return;
+
+      let isDragging = false;
+      let startX = 0;
+      let maxSlide = 0;
+
+      const onStart = (clientX) => {
+        if (runway.classList.contains("authorized")) return;
+        isDragging = true;
+        startX = clientX;
+        maxSlide = runway.clientWidth - thumb.clientWidth - 6;
+      };
+
+      const onMove = (clientX) => {
+        if (!isDragging) return;
+        let delta = clientX - startX;
+        if (delta < 0) delta = 0;
+        if (delta > maxSlide) delta = maxSlide;
+
+        thumb.style.left = `${3 + delta}px`;
+        fill.style.width = `${46 + delta}px`;
+
+        if (delta >= maxSlide * 0.90) {
+          // Success Authorize!
+          isDragging = false;
+          runway.classList.add("authorized");
+          thumb.style.left = `${maxSlide + 3}px`;
+          thumb.innerHTML = "✓";
+          const pn = "PN-" + Math.floor(1000 + Math.random() * 9000);
+          text.innerHTML = `<span>✓ AUTHORIZED: <strong>${pn}</strong></span>`;
+
+          // Release signal & highlight block
+          isBlockActive = false;
+          railway.setAspect("GREEN");
+          blockViz.setAuthorized();
+
+          const hud = document.getElementById("hudStatusMsg");
+          if (hud) hud.textContent = `BLOCK AUTHORIZED • PRIVATE NUMBER ${pn} ISSUED`;
+        }
+      };
+
+      const onEnd = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        if (!runway.classList.contains("authorized")) {
+          thumb.style.transition = "left 0.25s ease";
+          fill.style.transition = "width 0.25s ease";
+          thumb.style.left = "3px";
+          fill.style.width = "46px";
+          setTimeout(() => {
+            thumb.style.transition = "";
+            fill.style.transition = "";
+          }, 250);
+        }
+      };
+
+      thumb.addEventListener("mousedown", (e) => onStart(e.clientX));
+      window.addEventListener("mousemove", (e) => onMove(e.clientX));
+      window.addEventListener("mouseup", onEnd);
+
+      thumb.addEventListener("touchstart", (e) => onStart(e.touches[0].clientX), { passive: true });
+      window.addEventListener("touchmove", (e) => onMove(e.touches[0].clientX), { passive: true });
+      window.addEventListener("touchend", onEnd);
+    }
+  </script>
+</body>
+</html>

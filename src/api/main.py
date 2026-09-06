@@ -197,3 +197,13 @@ if os.path.exists(web_dir):
     def serve_frontend():
         return FileResponse(os.path.join(web_dir, "index.html"))
 
+    @app.get("/fi")
+    @app.get("/fi.html")
+    def serve_fi_mobile():
+        return FileResponse(os.path.join(web_dir, "fi.html"))
+
+    @app.get("/desktop")
+    def serve_desktop():
+        return FileResponse(os.path.join(web_dir, "index.html"))
+
+
